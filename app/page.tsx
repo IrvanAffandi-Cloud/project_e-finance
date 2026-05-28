@@ -25,7 +25,6 @@ export default function Home() {
     setTimeout(() => setTapCount(0), 2000) 
   }
 
-  // SIPEKAT SWEETALERT STYLE
   const baseSwalClass = {
     popup: '!max-w-[380px] !rounded-[2rem] border border-gray-200 shadow-2xl bg-white p-6',
     title: 'text-[#1D1D1F] font-black uppercase text-[12px] tracking-widest mb-4',
@@ -81,11 +80,12 @@ export default function Home() {
     }
   }
 
-  // GLOWING MENU SIPEKAT STYLE
+  // GLOWING MENU DENGAN UTANG
   const menus = [
     { id: 'DASHBOARD', path: '/dashboard', label: 'DASHBOARD ANALITIK', colorBg: 'bg-[#0B214A]', colorBorder: 'border-blue-400/20', colorGlow: 'bg-blue-600/30' },
     { id: 'TAGIHAN', path: '/pembayaran', label: 'PUSAT TAGIHAN', colorBg: 'bg-red-600', colorBorder: 'border-red-500', colorGlow: 'bg-red-500/30' },
     { id: 'CICILAN', path: '/cicilan', label: 'MANAJEMEN CICILAN', colorBg: 'bg-blue-600', colorBorder: 'border-blue-500', colorGlow: 'bg-blue-500/30' },
+    { id: 'UTANG', path: '/perorangan', label: 'UTANG PERORANGAN', colorBg: 'bg-purple-700', colorBorder: 'border-purple-500', colorGlow: 'bg-purple-500/30' },
     { id: 'PEMASUKAN', path: '/pemasukan', label: 'CATAT PEMASUKAN', colorBg: 'bg-green-600', colorBorder: 'border-green-500', colorGlow: 'bg-green-500/30' },
     { id: 'PENGELUARAN', path: '/pengeluaran', label: 'CATAT PENGELUARAN', colorBg: 'bg-orange-600', colorBorder: 'border-orange-500', colorGlow: 'bg-orange-500/30' },
   ]
@@ -99,13 +99,11 @@ export default function Home() {
         @keyframes neon-status-blink { 0%, 100% { opacity: 1; text-shadow: 0 0 8px currentColor, 0 0 15px currentColor; } 50% { opacity: 0.4; text-shadow: 0 0 2px currentColor; } }
       `}} />
 
-      {/* SIPEKAT U-SHAPE HEADER */}
       <header className="w-full relative z-20 flex justify-center">
         <div className="absolute inset-0 bg-gradient-to-br from-[#0B214A] via-[#1E3A8A] to-[#0B214A] h-[120px] rounded-b-[2.5rem] shadow-[0_10px_30px_rgba(30,58,138,0.3)] border-b border-blue-300/30 overflow-hidden">
           <div className="absolute top-0 h-full w-[50%] bg-gradient-to-r from-transparent via-white/[0.15] to-transparent animate-[shine-glossy_4s_infinite]"></div>
         </div>
         
-        {/* TOMBOL HEADER SIPEKAT STYLE */}
         {isLoggedIn && (
           <div className="absolute top-4 right-4 z-40 flex gap-2">
             <button onClick={() => router.push('/kategori')} className="bg-white/10 backdrop-blur-md border border-white/20 text-white font-black text-[7px] px-3 py-2 rounded-lg uppercase tracking-[0.2em] hover:bg-white/20 transition-all shadow-sm">
@@ -127,9 +125,8 @@ export default function Home() {
         </div>
       </header>
 
-      <div className="flex-1 w-full max-w-[420px] flex flex-col items-center justify-start gap-10 px-8 pt-8 pb-6 relative z-10">
+      <div className="flex-1 w-full max-w-[420px] flex flex-col items-center justify-start gap-8 px-8 pt-8 pb-6 relative z-10">
         
-        {/* MARQUEE SIPEKAT STYLE */}
         <div className="w-full overflow-hidden relative opacity-90" style={{ maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)' }}>
           <div className="inline-block whitespace-nowrap animate-[marquee-single_12s_linear_infinite]">
             <h1 className="inline-block text-[#1D1D1F] font-black text-[16px] tracking-tight uppercase">
@@ -139,8 +136,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* GLOWING BUTTON AREA */}
-        <div className="w-full flex flex-col gap-4 mt-auto">
+        <div className="w-full flex flex-col gap-3 mt-auto">
           {menus.map((btn) => (
             <div key={btn.id} className="relative group w-full">
               {isLoggedIn && <div className={`absolute -inset-1 ${btn.colorGlow} blur-xl rounded-full opacity-60 group-hover:opacity-100 transition duration-500`}></div>}
