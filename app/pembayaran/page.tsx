@@ -6,15 +6,26 @@ import { getRadarDashboard } from '@/app/actions'
 export default function PembayaranPage() {
   const [data, setData] = useState<{ tunggakan: any[], bulanIni: any[], bulanDepan: any[] }>({ tunggakan: [], bulanIni: [], bulanDepan: [] })
   const [loading, setLoading] = useState(true)
+  
+  // STATE BUAT SISTEM BUKA-TUTUP (ACCORDION)
+  // 0 = Tunggakan, 1 = Bulan Ini, 2 = Bulan Depan
+  const [openSections, setOpenSections] = useState<Record<number, boolean>>({ 0: true, 1: true, 2: false })
 
   useEffect(() => {
     getRadarDashboard().then(res => {
       const today = new Date()
       const currMonth = today.getMonth()
       const currYear = today.getFullYear()
+      
       const all = [...res.cicilan, ...res.utang].map(t => ({
-        ...t, nama: t.nama_kreditur || t.nama, beban: t.cicilan_master ? (t.cicilan_master.cicilan_wajib_per_bulan - t.nominal_dibayar) : Number(t.sisa_utang), tempo: new Date(t.tanggal_jatuh_tempo), tipe: t.cicilan_master ? 'CICILAN BANK' : 'UTANG PRIBADI'
+        ...t, 
+        // BUG FIX: Tarik nama dari cicilan_master kalau itu cicilan, kalau utang langsung ambil nama_kreditur
+        nama: t.cicilan_master?.nama_kreditur || t.nama_kreditur || 'TANPA NAMA', 
+        beban: t.cicilan_master ? (t.cicilan_master.cicilan_wajib_per_bulan - t.nominal_dibayar) : Number(t.sisa_utang), 
+        tempo: new Date(t.tanggal_jatuh_tempo), 
+        tipe: t.cicilan_master ? 'CICILAN' : 'UTANG' // Diperpendek biar desain muat
       }))
+
       setData({
         tunggakan: all.filter(t => t.tempo < new Date(currYear, currMonth, 1)),
         bulanIni: all.filter(t => t.tempo.getMonth() === currMonth && t.tempo.getFullYear() === currYear),
@@ -25,6 +36,10 @@ export default function PembayaranPage() {
   }, [])
 
   const formatRupiah = (a: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(a)
+
+  const toggleSection = (idx: number) => {
+    setOpenSections(prev => ({ ...prev, [idx]: !prev[idx] }))
+  }
 
   if (loading) return (
     <div className="min-h-screen bg-[#FBFBFD] flex flex-col items-center justify-center gap-3">
@@ -54,42 +69,54 @@ export default function PembayaranPage() {
         </div>
       </header>
 
-      <div className="w-full max-w-xl px-4 mt-6 flex flex-col gap-6">
+      <div className="w-full max-w-xl px-4 mt-6 flex flex-col gap-4">
         {[
-          { label: 'TUNGGAKAN DARURAT', items: data.tunggakan, color: 'text-red-600', bgBorder: 'border-red-200', bgCard: 'bg-red-50/50' },
-          { label: 'TAGIHAN BULAN INI', items: data.bulanIni, color: 'text-orange-600', bgBorder: 'border-orange-200', bgCard: 'bg-white' },
-          { label: 'ESTIMASI BULAN DEPAN', items: data.bulanDepan, color: 'text-blue-600', bgBorder: 'border-blue-200', bgCard: 'bg-white' }
+          { label: 'TUNGGAKAN DARURAT', items: data.tunggakan, color: 'text-red-600', borderColor: 'border-red-200', bgCard: 'bg-red-50/50' },
+          { label: 'TAGIHAN BULAN INI', items: data.bulanIni, color: 'text-orange-600', borderColor: 'border-orange-200', bgCard: 'bg-white' },
+          { label: 'ESTIMASI BULAN DEPAN', items: data.bulanDepan, color: 'text-blue-600', borderColor: 'border-blue-200', bgCard: 'bg-white' }
         ].map((section, idx) => {
           const subTotal = section.items.reduce((acc, curr) => acc + curr.beban, 0)
+          
           return (
-          <div key={idx} className="flex flex-col gap-1.5">
-            <div className="flex justify-between items-end ml-1 mb-1 border-b border-gray-200 pb-1">
-              <h2 className={`text-[9px] font-black uppercase tracking-[0.2em] ${section.color}`}>{section.label}</h2>
-              {subTotal > 0 && <span className={`text-[10px] font-black tracking-tight ${section.color}`}>{formatRupiah(subTotal)}</span>}
+          <div key={idx} className="flex flex-col">
+            
+            {/* ACCORDION HEADER (KLIK UNTUK BUKA/TUTUP) */}
+            <div onClick={() => toggleSection(idx)} className={`flex justify-between items-center px-4 py-4 bg-white border ${section.borderColor} rounded-[1.2rem] shadow-sm cursor-pointer hover:shadow-md active:scale-[0.98] transition-all`}>
+              <div className="flex flex-col">
+                <h2 className={`text-[10px] font-black uppercase tracking-[0.2em] ${section.color}`}>{section.label}</h2>
+                <span className="text-[8px] font-bold text-gray-400 mt-1 uppercase tracking-widest">{section.items.length} TAGIHAN</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className={`text-[12px] font-black tracking-tight ${section.color}`}>{formatRupiah(subTotal)}</span>
+                <svg className={`w-5 h-5 text-gray-400 transform transition-transform duration-300 ${openSections[idx] ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
+              </div>
             </div>
             
-            <div className="bg-white border border-gray-200 rounded-[1.2rem] shadow-sm overflow-hidden flex flex-col">
-              {section.items.length === 0 ? (
-                <p className="text-[9px] font-black tracking-[0.2em] text-gray-400 text-center py-5 uppercase">BERSIH</p>
-              ) : (
-                section.items.map((t: any, i: number) => (
-                  <div key={i} className={`flex justify-between items-center px-4 py-3 border-b border-gray-100 last:border-b-0 ${section.bgCard}`}>
-                    <div className="flex flex-col">
-                      <div className="flex items-center gap-2">
-                        <span className="font-black text-[11px] text-[#1D1D1F] uppercase tracking-tight truncate max-w-[120px] md:max-w-[180px]">{t.nama}</span>
-                        <span className={`text-[6px] font-black px-1.5 py-0.5 rounded border uppercase tracking-widest ${t.tipe === 'CICILAN BANK' ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-purple-50 text-purple-600 border-purple-200'}`}>{t.tipe}</span>
+            {/* ISI DAFTAR TAGIHAN (MUNCUL KALAU OPEN=TRUE) */}
+            {openSections[idx] && (
+              <div className={`mt-2 bg-white border border-gray-200 rounded-[1.2rem] shadow-sm overflow-hidden flex flex-col transition-all origin-top`}>
+                {section.items.length === 0 ? (
+                  <p className="text-[9px] font-black tracking-[0.2em] text-gray-400 text-center py-6 uppercase">BERSIH DARI TAGIHAN</p>
+                ) : (
+                  section.items.map((t: any, i: number) => (
+                    <div key={i} className={`flex justify-between items-center px-4 py-4 border-b border-gray-100 last:border-b-0 ${section.bgCard}`}>
+                      <div className="flex flex-col">
+                        <div className="flex items-center gap-2">
+                          <span className="font-black text-[11px] text-[#1D1D1F] uppercase tracking-tight truncate max-w-[140px] md:max-w-[200px]">{t.nama}</span>
+                          <span className={`text-[6px] font-black px-1.5 py-0.5 rounded border uppercase tracking-widest ${t.tipe === 'CICILAN' ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-purple-50 text-purple-600 border-purple-200'}`}>{t.tipe}</span>
+                        </div>
+                        <span className="text-[8px] font-bold text-gray-500 uppercase tracking-[0.1em] mt-1">
+                          TEMPO: {t.tempo.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
+                        </span>
                       </div>
-                      <span className="text-[8px] font-bold text-gray-500 uppercase tracking-[0.1em] mt-0.5">
-                        TEMPO: {t.tempo.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
-                      </span>
+                      <div className="flex flex-col items-end">
+                        <span className={`font-black text-[12px] tracking-tight ${section.color}`}>{formatRupiah(t.beban)}</span>
+                      </div>
                     </div>
-                    <div className="flex flex-col items-end">
-                      <span className={`font-black text-[12px] tracking-tight ${section.color}`}>{formatRupiah(t.beban)}</span>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
+                  ))
+                )}
+              </div>
+            )}
           </div>
         )})}
       </div>
