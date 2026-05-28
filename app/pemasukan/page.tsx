@@ -90,8 +90,8 @@ export default function PemasukanPage() {
             <svg className="w-4 h-4 text-white pr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path></svg>
           </Link>
           
-          <h1 className="text-white font-black text-[13px] tracking-[0.4em] uppercase drop-shadow-md z-10 leading-none">PEMASUKAN</h1>
-          <p className="text-green-100 text-[8px] font-black tracking-[0.3em] uppercase opacity-90 mt-1 z-10 leading-none">PENCATATAN DANA MASUK</p>
+          {/* JUDUL 17px FONT-BLACK */}
+          <h1 className="text-white font-black text-[17px] tracking-[0.4em] uppercase drop-shadow-md z-10 leading-none">PEMASUKAN</h1>
         </div>
       </header>
 
@@ -105,17 +105,17 @@ export default function PemasukanPage() {
           </div>
 
           <form onSubmit={handleSimpan} className="flex flex-col gap-2">
-            <input name="nominal" type="text" inputMode="numeric" onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.') }} placeholder="NOMINAL (RP)" className="w-full h-10 px-3 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-black text-[12px] outline-none focus:border-green-400 focus:bg-white tracking-widest transition-all placeholder:text-gray-400 placeholder:font-bold" />
+            <input name="nominal" type="text" inputMode="numeric" onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.') }} placeholder="Jumlah" className="w-full h-10 px-3 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-bold text-[12px] outline-none focus:border-green-400 focus:bg-white tracking-widest transition-all placeholder:text-gray-400" />
             
-            <select name="kategori" defaultValue="" className="w-full h-10 px-3 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-black text-[10px] outline-none focus:border-green-400 focus:bg-white text-gray-600 uppercase tracking-widest transition-all">
-              <option value="" disabled>-- SUMBER DANA --</option>
+            <select name="kategori" defaultValue="" className="w-full h-10 px-3 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-bold text-[10px] outline-none focus:border-green-400 focus:bg-white text-gray-600 uppercase tracking-widest transition-all">
+              <option value="" disabled>- PILIH SUMBER DANA -</option>
               {kategoriList.map(k => <option key={k.id} value={k.id}>{k.nama_kategori}</option>)}
             </select>
             
-            <input name="catatan" type="text" placeholder="CATATAN / DESKRIPSI" className="w-full h-10 px-3 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-black text-[10px] uppercase outline-none focus:border-green-400 focus:bg-white transition-all placeholder:text-gray-400 placeholder:font-bold tracking-widest" />
+            <input name="catatan" type="text" placeholder="Deskripsi" className="w-full h-10 px-3 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-bold text-[10px] uppercase outline-none focus:border-green-400 focus:bg-white transition-all placeholder:text-gray-400 tracking-widest" />
             
-            <button type="submit" className="w-full h-10 bg-green-600 text-white font-black text-[10px] uppercase rounded-xl shadow-sm hover:bg-green-700 active:scale-95 transition-all mt-1 tracking-[0.15em]">
-              SIMPAN DATA
+            <button type="submit" className="w-full h-10 bg-green-600 text-white font-bold text-[10px] uppercase rounded-xl shadow-sm hover:bg-green-700 active:scale-95 transition-all mt-1 tracking-[0.15em]">
+              SIMPAN
             </button>
           </form>
         </div>
@@ -134,14 +134,16 @@ export default function PemasukanPage() {
           <div className="bg-white border border-gray-200 rounded-[1.2rem] shadow-sm overflow-hidden flex flex-col">
             {transaksi.length === 0 ? <p className="text-[9px] font-black tracking-[0.2em] text-gray-400 text-center py-6">BELUM ADA DATA</p> : 
               transaksi.map((t, i) => (
-                <div key={t.id} onClick={() => handleAksi(t)} className={`flex justify-between items-center px-4 py-3 border-b border-gray-100 last:border-b-0 cursor-pointer hover:bg-green-50 active:bg-green-100 transition-colors`}>
+                // PADDING DIPRESS JADI py-2.5 px-4
+                <div key={t.id} onClick={() => handleAksi(t)} className={`flex justify-between items-center px-4 py-2.5 border-b border-gray-100 last:border-b-0 cursor-pointer hover:bg-green-50 active:bg-green-100 transition-colors`}>
                   <div className="flex flex-col">
-                    <span className="font-black text-[11px] text-[#1D1D1F] uppercase tracking-tight">{t.kategori?.nama_kategori}</span>
+                    {/* FONT BOLD BUKAN BLACK */}
+                    <span className="font-bold text-[12px] text-[#1D1D1F] uppercase tracking-tight">{t.kategori?.nama_kategori}</span>
                     <span className="text-[8px] font-bold text-gray-400 uppercase tracking-[0.1em] mt-0.5">{t.catatan || '-'}</span>
                   </div>
                   <div className="flex flex-col items-end">
-                    <span className="font-black text-[12px] text-green-600 tracking-tight">{formatRupiah(t.nominal)}</span>
-                    <span className="text-[7px] font-black text-gray-400 uppercase tracking-widest mt-1">{new Date(t.waktu_transaksi).toLocaleDateString('id-ID')}</span>
+                    <span className="font-bold text-[12px] text-green-600 tracking-tight">{formatRupiah(t.nominal)}</span>
+                    <span className="text-[7px] font-bold text-gray-400 uppercase tracking-widest mt-1">{new Date(t.waktu_transaksi).toLocaleDateString('id-ID')}</span>
                   </div>
                 </div>
               ))

@@ -25,10 +25,10 @@ export default function CicilanDetailPage() {
   const formatRupiah = (angka: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka)
 
   const baseSwalClass = {
-    popup: '!max-w-[380px] !rounded-[2rem] border border-gray-200 shadow-2xl bg-white p-5',
-    title: 'text-[#1D1D1F] font-black uppercase text-[12px] tracking-widest mb-3',
-    actions: 'w-full flex flex-col gap-2 mt-4',
-    confirmButton: 'w-full h-10 flex items-center justify-center bg-blue-600 text-white font-black text-[10px] tracking-[0.15em] uppercase px-5 rounded-xl shadow-sm hover:bg-blue-700 active:scale-95 transition-all duration-200',
+    popup: '!max-w-[380px] !rounded-[2rem] border border-gray-200 shadow-2xl bg-white p-6',
+    title: 'text-[#1D1D1F] font-black uppercase text-[12px] tracking-widest mb-4',
+    actions: 'w-full flex flex-col gap-2 mt-5',
+    confirmButton: 'w-full h-10 flex items-center justify-center bg-[#0B214A] text-white font-black text-[10px] tracking-[0.15em] uppercase px-5 rounded-xl shadow-sm hover:bg-blue-900 active:scale-95 transition-all duration-200',
     cancelButton: 'w-full h-10 flex items-center justify-center bg-[#F5F5F7] text-gray-500 font-black text-[10px] tracking-[0.15em] uppercase px-5 rounded-xl hover:bg-gray-200 active:scale-95 transition-all duration-200'
   }
 
@@ -37,10 +37,10 @@ export default function CicilanDetailPage() {
     const formatCicilan = new Intl.NumberFormat('id-ID').format(master.cicilan_wajib_per_bulan)
 
     const htmlForm = `
-      <div class="flex flex-col gap-2 text-left">
-        <input id="swal-edit-nama" type="text" value="${master.nama_kreditur}" class="w-full h-10 px-4 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-black text-[11px] uppercase tracking-widest outline-none focus:border-blue-500">
-        <input id="swal-edit-pokok" type="text" inputmode="numeric" value="${formatPokok}" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.')" class="w-full h-10 px-4 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-black text-[11px] tracking-widest outline-none focus:border-blue-500">
-        <input id="swal-edit-cicilan" type="text" inputmode="numeric" value="${formatCicilan}" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.')" class="w-full h-10 px-4 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-black text-[11px] tracking-widest outline-none focus:border-blue-500">
+      <div class="flex flex-col gap-3 text-left">
+        <input id="swal-edit-nama" type="text" value="${master.nama_kreditur}" class="w-full h-10 px-4 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-bold text-[11px] uppercase tracking-widest outline-none focus:border-blue-500">
+        <input id="swal-edit-pokok" type="text" inputmode="numeric" value="${formatPokok}" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.')" class="w-full h-10 px-4 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-bold text-[11px] tracking-widest outline-none focus:border-blue-500">
+        <input id="swal-edit-cicilan" type="text" inputmode="numeric" value="${formatCicilan}" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.')" class="w-full h-10 px-4 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-bold text-[11px] tracking-widest outline-none focus:border-blue-500">
       </div>
     `
     const { value: form } = await Swal.fire({ title: 'EDIT BUKU INDUK', html: htmlForm, showCancelButton: true, confirmButtonText: 'SIMPAN', customClass: baseSwalClass, buttonsStyling: false,
@@ -62,14 +62,14 @@ export default function CicilanDetailPage() {
     const htmlForm = `
       <input id="swal-nominal" type="text" inputmode="numeric" value="${formatAwal}" 
       oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.')" 
-      class="w-full h-12 px-4 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-black text-[14px] outline-none focus:border-blue-500 mb-4 tracking-widest">
+      class="w-full h-10 px-4 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-bold text-[14px] outline-none focus:border-blue-500 mb-4 tracking-widest">
       
       <div class="flex items-center justify-center gap-3 bg-blue-50 p-3 rounded-xl border border-blue-100">
-        <input type="checkbox" id="swal-potong" class="w-5 h-5 accent-blue-600" checked>
-        <span class="text-[9px] font-black text-blue-900 uppercase tracking-widest">POTONG SALDO AKTIF</span>
+        <input type="checkbox" id="swal-potong" class="w-4 h-4 accent-blue-600" checked>
+        <span class="text-[9px] font-bold text-[#1D1D1F] uppercase tracking-widest">POTONG SALDO AKTIF</span>
       </div>
     `
-    const { value: form } = await Swal.fire({ title: `SETOR BLN KE-${d.bulan_ke}`, html: htmlForm, showCancelButton: true, confirmButtonText: 'SIMPAN', customClass: baseSwalClass, buttonsStyling: false,
+    const { value: form } = await Swal.fire({ title: `Setor bulan ke - ${d.bulan_ke}`, html: htmlForm, showCancelButton: true, confirmButtonText: 'SIMPAN', customClass: baseSwalClass, buttonsStyling: false,
       preConfirm: () => { 
         const nom = Number((document.getElementById('swal-nominal') as HTMLInputElement).value.replace(/\./g, ''))
         const potong = (document.getElementById('swal-potong') as HTMLInputElement).checked
@@ -111,46 +111,71 @@ export default function CicilanDetailPage() {
           <Link href="/cicilan" className="absolute top-1/2 -translate-y-1/2 left-4 w-8 h-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 hover:bg-white/30 active:scale-95 transition-all z-10">
             <svg className="w-4 h-4 text-white pr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path></svg>
           </Link>
-          <h1 className="text-white font-black text-[12px] tracking-[0.3em] uppercase drop-shadow-md z-10 leading-none truncate max-w-[200px]">{master?.nama_kreditur}</h1>
+          <h1 className="text-white font-black text-[17px] tracking-[0.4em] uppercase drop-shadow-md z-10 leading-none truncate max-w-[250px]">{master?.nama_kreditur}</h1>
         </div>
       </header>
 
       <div className="w-full max-w-xl px-4 mt-6 flex flex-col gap-4">
-        <div className="bg-[#1D1D1F] p-5 rounded-[1.5rem] shadow-xl text-white grid grid-cols-2 gap-4 border border-blue-900">
-          <div className="col-span-2 flex justify-between border-b border-gray-800 pb-3">
-             <span className="text-[8px] font-black text-gray-400 uppercase tracking-[0.2em]">POKOK + BUNGA</span>
-             <button onClick={handleEditMaster} className="text-[8px] font-black text-blue-400 uppercase tracking-[0.2em] underline">EDIT</button>
+        
+        {/* PAPAN REKAP POKOK & BUNGA */}
+        <div className="bg-white border border-gray-200 p-4 rounded-[1.2rem] shadow-sm grid grid-cols-2 gap-4">
+          <div className="col-span-2 flex justify-between items-center border-b border-gray-100 pb-3">
+             <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">POKOK + BUNGA</span>
+             <button onClick={handleEditMaster} className="text-[9px] font-bold text-blue-600 uppercase tracking-[0.2em] hover:underline">EDIT</button>
           </div>
-          <div><p className="text-[7px] text-gray-500 uppercase tracking-widest">POKOK</p><p className="font-black text-[12px]">{formatRupiah(master?.total_pinjaman || 0)}</p></div>
-          <div><p className="text-[7px] text-gray-500 uppercase tracking-widest">BUNGA</p><p className="font-black text-[12px] text-red-400">+{formatRupiah(totalBunga)}</p></div>
-          <div><p className="text-[7px] text-gray-500 uppercase tracking-widest">BAYAR</p><p className="font-black text-[12px] text-green-400">{formatRupiah(totalBayar)}</p></div>
-          <div><p className="text-[7px] text-gray-500 uppercase tracking-widest">SISA</p><p className="font-black text-[12px] text-yellow-400">{formatRupiah(sisaKewajiban)}</p></div>
+          <div><p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">POKOK</p><p className="font-bold text-[12px] text-[#1D1D1F]">{formatRupiah(master?.total_pinjaman || 0)}</p></div>
+          <div><p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">BUNGA</p><p className="font-bold text-[12px] text-red-600">+{formatRupiah(totalBunga)}</p></div>
+          <div><p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">TERBAYAR</p><p className="font-bold text-[12px] text-green-600">{formatRupiah(totalBayar)}</p></div>
+          <div><p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">SISA</p><p className="font-bold text-[12px] text-[#1D1D1F]">{formatRupiah(sisaKewajiban)}</p></div>
         </div>
 
+        {/* COMPACT LIST WRAPPER */}
         <div className="flex flex-col gap-1.5 mt-2">
-          <h2 className="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1 mb-1 border-b border-gray-200 pb-1">RIWAYAT BULANAN</h2>
-          {detail.map((d) => {
-            const isTelat = new Date(d.tanggal_jatuh_tempo).getTime() < new Date().getTime() && d.status === 'BELUM BAYAR'
-            let statusClass = 'bg-gray-100 text-gray-500'
-            if (d.status === 'LUNAS') statusClass = 'bg-green-100 text-green-700'
-            else if (d.status === 'KURANG') statusClass = 'bg-yellow-100 text-yellow-700'
-            else if (isTelat) statusClass = 'bg-red-100 text-red-700 animate-pulse'
+          <h2 className="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1 mb-1 border-b border-gray-200 pb-1">RIWAYAT</h2>
+          
+          <div className="bg-white border border-gray-200 rounded-[1.2rem] shadow-sm overflow-hidden flex flex-col">
+            {detail.map((d) => {
+              const isTelat = new Date(d.tanggal_jatuh_tempo).getTime() < new Date().getTime() && d.status === 'BELUM BAYAR'
+              
+              const wajibPerBulan = Number(master?.cicilan_wajib_per_bulan || 0)
+              const sudahDibayar = Number(d.nominal_dibayar || 0)
+              const kurangBayar = wajibPerBulan - sudahDibayar
 
-            return (
-              <div key={d.id} onClick={() => handleSetor(d)} className="bg-white border border-gray-200 rounded-[1rem] p-4 flex justify-between items-center cursor-pointer hover:bg-blue-50 transition-all">
-                <div>
-                  <p className="font-black text-[11px] uppercase tracking-tight">BLN KE - {d.bulan_ke}</p>
-                  <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">
-                    {new Date(d.tanggal_jatuh_tempo).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })}
-                  </p>
+              let statusClass = 'bg-gray-50 text-gray-400 border-gray-200'
+              if (d.status === 'LUNAS') statusClass = 'bg-green-50 text-green-600 border-green-200'
+              else if (d.status === 'KURANG') statusClass = 'bg-yellow-50 text-yellow-600 border-yellow-200' // Class ini tetep ada kalau mau dipake logic lain
+              else if (isTelat) statusClass = 'bg-red-50 text-red-600 border-red-200 animate-pulse'
+
+              return (
+                <div key={d.id} onClick={() => handleSetor(d)} className="flex justify-between items-center px-4 py-2.5 border-b border-gray-100 last:border-b-0 cursor-pointer hover:bg-blue-50 active:bg-blue-100 transition-colors">
+                  <div className="flex flex-col">
+                    <p className="font-bold text-[12px] text-[#1D1D1F] tracking-tight">Bulan ke - {d.bulan_ke}</p>
+                    <p className="text-[8px] font-bold text-gray-400 uppercase tracking-[0.1em] mt-0.5">
+                      TEMPO : {new Date(d.tanggal_jatuh_tempo).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
+                    </p>
+                  </div>
+                  <div className="text-right flex flex-col items-end">
+                    
+                    {/* HILANGKAN BADGE JIKA STATUSNYA KURANG */}
+                    {d.status !== 'KURANG' && (
+                      <span className={`text-[6px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-widest mb-1 ${statusClass}`}>
+                        {d.status}
+                      </span>
+                    )}
+
+                    <p className="font-bold text-[12px] text-[#1D1D1F]">{formatRupiah(sudahDibayar)}</p>
+                    
+                    {/* HANYA TAMPIL JIKA STATUSNYA BENAR-BENAR KURANG */}
+                    {d.status === 'KURANG' && kurangBayar > 0 && (
+                      <p className="text-[7px] font-bold text-red-500 uppercase tracking-widest mt-0.5">
+                        KURANG: {formatRupiah(kurangBayar)}
+                      </p>
+                    )}
+                  </div>
                 </div>
-                <div className="text-right">
-                  <span className={`text-[7px] font-black px-1.5 py-0.5 rounded uppercase tracking-widest mb-1 block ${statusClass}`}>{d.status}</span>
-                  <p className="font-black text-[12px]">{formatRupiah(Number(d.nominal_dibayar))}</p>
-                </div>
-              </div>
-            )
-          })}
+              )
+            })}
+          </div>
         </div>
       </div>
     </main>

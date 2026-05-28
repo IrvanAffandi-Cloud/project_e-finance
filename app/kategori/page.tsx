@@ -101,24 +101,45 @@ export default function KategoriPage() {
           <Link href="/" className="absolute top-1/2 -translate-y-1/2 left-4 w-8 h-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 hover:bg-white/30 active:scale-95 transition-all z-10">
             <svg className="w-4 h-4 text-white pr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path></svg>
           </Link>
-          <h1 className="text-white font-black text-[13px] tracking-[0.4em] uppercase drop-shadow-md z-10 leading-none">DATABASE KATEGORI</h1>
-          <p className="text-blue-100 text-[8px] font-black tracking-[0.3em] uppercase opacity-90 mt-1 z-10 leading-none">MANAJER TIPE TRANSAKSI</p>
+          {/* JUDUL 17px TEBAL (FONT-BLACK) */}
+          <h1 className="text-white font-black text-[17px] tracking-[0.4em] uppercase drop-shadow-md z-10 leading-none">DATABASE KATEGORI</h1>
         </div>
       </header>
 
-      <div className="w-full max-w-xl px-4 mt-6 flex flex-col gap-3">
-        {kategoriList.map(k => {
-          const isSystem = k.nama_kategori === 'CICILAN BANK' || k.nama_kategori === 'BAYAR UTANG PRIBADI'
-          return (
-            <div key={k.id} onClick={() => !isSystem && handleAksi(k)} className={`p-4 rounded-[1.2rem] border shadow-sm flex justify-between items-center transition-all ${isSystem ? 'bg-gray-50 border-gray-200 opacity-70' : 'bg-white border-blue-100 cursor-pointer hover:border-blue-300 active:scale-95'}`}>
-              <div className="flex flex-col">
-                <span className="font-black text-[11px] uppercase tracking-tight">{k.nama_kategori}</span>
-                <span className={`text-[8px] font-black mt-1 tracking-[0.2em] uppercase ${k.tipe === 'PEMASUKAN' ? 'text-green-600' : 'text-red-600'}`}>TIPE: {k.tipe}</span>
-              </div>
-              {isSystem && <span className="text-[6px] font-black bg-gray-200 text-gray-500 px-2 py-1 rounded border border-gray-300 uppercase tracking-widest">SISTEM TERKUNCI</span>}
-            </div>
-          )
-        })}
+      <div className="w-full max-w-xl px-4 mt-6 flex flex-col">
+        {/* COMPACT LIST WRAPPER (RAPET & PADET) */}
+        <div className="bg-white border border-gray-200 rounded-[1.2rem] shadow-sm overflow-hidden flex flex-col">
+          {kategoriList.length === 0 ? (
+            <p className="text-[10px] font-bold tracking-[0.2em] text-gray-400 text-center py-6 uppercase">BELUM ADA KATEGORI</p>
+          ) : (
+            kategoriList.map(k => {
+              // Deteksi sistem asli
+              const isSystem = k.nama_kategori === 'CICILAN BANK' || k.nama_kategori === 'BAYAR UTANG PRIBADI'
+              
+              // Modifikasi teks cuma buat tampilan layar
+              let displayName = k.nama_kategori
+              if (displayName === 'CICILAN BANK') displayName = 'CICILAN'
+              if (displayName === 'BAYAR UTANG PRIBADI') displayName = 'PERORANGAN'
+
+              return (
+                <div 
+                  key={k.id} 
+                  onClick={() => !isSystem && handleAksi(k)} 
+                  className={`flex justify-between items-center px-4 py-2.5 border-b border-gray-100 last:border-b-0 transition-colors ${isSystem ? 'bg-gray-50/50 opacity-80' : 'cursor-pointer hover:bg-blue-50 active:bg-blue-100'}`}
+                >
+                  <div className="flex flex-col">
+                    {/* FONT BOLD (TIDAK TERLALU TEBAL) DAN PAKE DISPLAY NAME BARU */}
+                    <span className="font-bold text-[12px] uppercase tracking-tight text-[#1D1D1F]">{displayName}</span>
+                    <span className={`text-[9px] font-bold mt-0.5 tracking-[0.2em] uppercase ${k.tipe === 'PEMASUKAN' ? 'text-green-600' : 'text-red-600'}`}>TIPE: {k.tipe}</span>
+                  </div>
+                  {isSystem && (
+                    <span className="text-[7px] font-bold bg-red-50 text-red-500 px-2 py-1 rounded border border-red-100 uppercase tracking-widest">LOCKED</span>
+                  )}
+                </div>
+              )
+            })
+          )}
+        </div>
       </div>
 
       <button onClick={handleTambah} className="fixed bottom-6 right-6 w-14 h-14 bg-blue-700 text-white rounded-full flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 z-50">

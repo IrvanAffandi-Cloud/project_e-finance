@@ -19,11 +19,11 @@ export default function PembayaranPage() {
       
       const all = [...res.cicilan, ...res.utang].map(t => ({
         ...t, 
-        // BUG FIX: Tarik nama dari cicilan_master kalau itu cicilan, kalau utang langsung ambil nama_kreditur
         nama: t.cicilan_master?.nama_kreditur || t.nama_kreditur || 'TANPA NAMA', 
         beban: t.cicilan_master ? (t.cicilan_master.cicilan_wajib_per_bulan - t.nominal_dibayar) : Number(t.sisa_utang), 
         tempo: new Date(t.tanggal_jatuh_tempo), 
-        tipe: t.cicilan_master ? 'CICILAN' : 'UTANG' // Diperpendek biar desain muat
+        // UBAH DISPLAY NAME MENJADI CICILAN ATAU PERORANGAN
+        tipe: t.cicilan_master ? 'CICILAN' : 'PERORANGAN'
       }))
 
       setData({
@@ -64,14 +64,14 @@ export default function PembayaranPage() {
             <svg className="w-4 h-4 text-white pr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path></svg>
           </Link>
           
-          <h1 className="text-white font-black text-[13px] tracking-[0.4em] uppercase drop-shadow-md z-10 leading-none">PUSAT TAGIHAN</h1>
-          <p className="text-red-100 text-[8px] font-black tracking-[0.3em] uppercase opacity-90 mt-1 z-10 leading-none">RADAR JATUH TEMPO</p>
+          {/* JUDUL 17px FONT-BLACK */}
+          <h1 className="text-white font-black text-[17px] tracking-[0.4em] uppercase drop-shadow-md z-10 leading-none">PUSAT TAGIHAN</h1>
         </div>
       </header>
 
       <div className="w-full max-w-xl px-4 mt-6 flex flex-col gap-4">
         {[
-          { label: 'TUNGGAKAN DARURAT', items: data.tunggakan, color: 'text-red-600', borderColor: 'border-red-200', bgCard: 'bg-red-50/50' },
+          { label: 'TUNGGAKAN', items: data.tunggakan, color: 'text-red-600', borderColor: 'border-red-200', bgCard: 'bg-red-50/50' },
           { label: 'TAGIHAN BULAN INI', items: data.bulanIni, color: 'text-orange-600', borderColor: 'border-orange-200', bgCard: 'bg-white' },
           { label: 'ESTIMASI BULAN DEPAN', items: data.bulanDepan, color: 'text-blue-600', borderColor: 'border-blue-200', bgCard: 'bg-white' }
         ].map((section, idx) => {
@@ -80,7 +80,7 @@ export default function PembayaranPage() {
           return (
           <div key={idx} className="flex flex-col">
             
-            {/* ACCORDION HEADER (KLIK UNTUK BUKA/TUTUP) */}
+            {/* ACCORDION HEADER */}
             <div onClick={() => toggleSection(idx)} className={`flex justify-between items-center px-4 py-4 bg-white border ${section.borderColor} rounded-[1.2rem] shadow-sm cursor-pointer hover:shadow-md active:scale-[0.98] transition-all`}>
               <div className="flex flex-col">
                 <h2 className={`text-[10px] font-black uppercase tracking-[0.2em] ${section.color}`}>{section.label}</h2>
@@ -92,21 +92,24 @@ export default function PembayaranPage() {
               </div>
             </div>
             
-            {/* ISI DAFTAR TAGIHAN (MUNCUL KALAU OPEN=TRUE) */}
+            {/* ISI DAFTAR TAGIHAN */}
             {openSections[idx] && (
               <div className={`mt-2 bg-white border border-gray-200 rounded-[1.2rem] shadow-sm overflow-hidden flex flex-col transition-all origin-top`}>
                 {section.items.length === 0 ? (
-                  <p className="text-[9px] font-black tracking-[0.2em] text-gray-400 text-center py-6 uppercase">BERSIH DARI TAGIHAN</p>
+                  <p className="text-[9px] font-bold tracking-[0.2em] text-gray-400 text-center py-6 uppercase">BERSIH DARI TAGIHAN</p>
                 ) : (
                   section.items.map((t: any, i: number) => (
-                    <div key={i} className={`flex justify-between items-center px-4 py-4 border-b border-gray-100 last:border-b-0 ${section.bgCard}`}>
+                    // PADDING DIPRESS JADI py-2.5
+                    <div key={i} className={`flex justify-between items-center px-4 py-2.5 border-b border-gray-100 last:border-b-0 ${section.bgCard}`}>
                       <div className="flex flex-col">
                         <div className="flex items-center gap-2">
-                          <span className="font-black text-[11px] text-[#1D1D1F] uppercase tracking-tight truncate max-w-[140px] md:max-w-[200px]">{t.nama}</span>
-                          <span className={`text-[6px] font-black px-1.5 py-0.5 rounded border uppercase tracking-widest ${t.tipe === 'CICILAN' ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-purple-50 text-purple-600 border-purple-200'}`}>{t.tipe}</span>
+                          {/* FONT BOLD BUKAN BLACK */}
+                          <span className="font-bold text-[12px] text-[#1D1D1F] uppercase tracking-tight truncate max-w-[140px] md:max-w-[200px]">{t.nama}</span>
+                          {/* BADGE TIPE FONT BOLD */}
+                          <span className={`text-[6px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-widest ${t.tipe === 'CICILAN' ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-purple-50 text-purple-600 border-purple-200'}`}>{t.tipe}</span>
                         </div>
-                        <span className="text-[8px] font-bold text-gray-500 uppercase tracking-[0.1em] mt-1">
-                          TEMPO: {t.tempo.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
+                        <span className="text-[8px] font-bold text-gray-500 uppercase tracking-[0.1em] mt-0.5">
+                          TEMPO : {t.tempo.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
                         </span>
                       </div>
                       <div className="flex flex-col items-end">
