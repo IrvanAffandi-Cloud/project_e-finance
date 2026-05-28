@@ -50,7 +50,7 @@ export default function Dashboard() {
   if (loading) return (
     <div className="min-h-screen bg-[#FBFBFD] flex flex-col items-center justify-center gap-3">
       <div className="w-8 h-8 border-[3px] border-[#F5F5F7] border-t-[#1D1D1F] rounded-full animate-spin"></div>
-      <p className="font-bold text-[10px] text-gray-500 uppercase animate-pulse tracking-widest">MENYISIR SALDO...</p>
+      <p className="font-bold text-[10px] text-gray-500 uppercase animate-pulse tracking-widest">PROCESSING...</p>
     </div>
   )
 
@@ -59,11 +59,11 @@ export default function Dashboard() {
       
       <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-100 px-5 py-4 flex justify-between items-center shadow-sm">
         <div>
-          <h1 className="font-bold text-[15px] uppercase tracking-wider">E-FINANCE</h1>
-          <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">RADAR UTAMA</p>
+          <h1 className="font-bold text-[15px] uppercase tracking-wider">DIGITAL FINANCE</h1>
+          <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-0.5"></p>
         </div>
         <button onClick={handleLogout} className="h-8 px-4 bg-[#F5F5F7] border border-gray-200 hover:bg-gray-200 text-[#1D1D1F] font-bold text-[9px] uppercase rounded-full transition-all active:scale-95 shadow-sm">
-          KUNCI
+          LOCK
         </button>
       </header>
 
@@ -72,18 +72,18 @@ export default function Dashboard() {
         {/* KARTU SALDO UTAMA */}
         <div className="bg-[#1D1D1F] text-white rounded-[1.5rem] p-6 shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -mr-10 -mt-10"></div>
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 relative z-10">SISA SALDO AKTIF</p>
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 relative z-10">SALDO</p>
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight relative z-10">{formatRupiah(saldoAktif)}</h2>
         </div>
 
         {/* RUANG EKSEKUSI */}
         <div className="flex flex-col gap-3">
-          <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-wider ml-1">RUANG EKSEKUSI</h3>
+          <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-wider ml-1">DATABASE CONTROLLER</h3>
           
           {/* PRIORITAS UTAMA: PUSAT TAGIHAN */}
           <Link href="/pembayaran" className="w-full bg-white border border-red-600 rounded-2xl p-4 flex flex-row items-center justify-center gap-3 shadow-sm hover:shadow-md hover:bg-red-50 transition-all active:scale-95">
             <span className="text-2xl">📅</span>
-            <span className="text-[10px] font-bold text-red-700 uppercase tracking-wider">PUSAT KOMANDO TAGIHAN</span>
+            <span className="text-[10px] font-bold text-red-700 uppercase tracking-wider">TAGIHAN</span>
           </Link>
 
           {/* NAVIGASI LAINNYA */}
@@ -98,7 +98,7 @@ export default function Dashboard() {
             </Link>
             <Link href="/cicilan" className="bg-white border border-blue-200 rounded-2xl p-4 flex flex-col items-center justify-center gap-2 shadow-sm hover:shadow-md hover:bg-blue-50 transition-all active:scale-95">
               <span className="text-2xl">🏦</span>
-              <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wider">CICILAN BANK</span>
+              <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wider">CICILAN</span>
             </Link>
             <Link href="/perorangan" className="bg-white border border-purple-200 rounded-2xl p-4 flex flex-col items-center justify-center gap-2 shadow-sm hover:shadow-md hover:bg-purple-50 transition-all active:scale-95">
               <span className="text-2xl">🤝</span>

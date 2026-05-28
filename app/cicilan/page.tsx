@@ -61,7 +61,7 @@ export default function CicilanPage() {
   return (
     <main className="min-h-screen bg-[#FBFBFD] text-[#1D1D1F] flex flex-col font-sans pb-24 px-5 pt-6">
       <header className="flex justify-between items-center mb-6">
-        <h1 className="font-bold text-[18px] text-blue-800 uppercase">BUKU INDUK CICILAN</h1>
+        <h1 className="font-bold text-[18px] text-blue-800 uppercase">DATA CICILAN</h1>
         <Link href="/dashboard" className="text-[10px] font-bold bg-white border border-gray-200 px-4 py-2 rounded-lg">KEMBALI</Link>
       </header>
 
@@ -78,7 +78,7 @@ export default function CicilanPage() {
               </div>
 
               <Link href={`/cicilan/${c.id}`} className="flex items-center justify-center w-full bg-blue-50 text-blue-700 font-bold py-3 rounded-xl text-[11px] uppercase tracking-widest hover:bg-blue-100 transition-all">
-                BUKA RINCIAN BUKU
+                BUKA DATA
               </Link>
             </div>
           )

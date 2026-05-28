@@ -45,22 +45,22 @@ export default function PemasukanPage() {
   return (
     <main className="min-h-screen bg-[#FBFBFD] text-[#1D1D1F] flex flex-col items-center px-5 pt-10">
       <div className="w-full max-w-md bg-white p-6 rounded-[1.5rem] shadow-xl border border-gray-100">
-        <h1 className="font-bold text-[18px] uppercase tracking-wider text-green-600 mb-6 text-center">🟢 CATAT PEMASUKAN</h1>
+        <h1 className="font-bold text-[18px] uppercase tracking-wider text-green-600 mb-6 text-center">CATAT PEMASUKAN</h1>
         <form onSubmit={handleSimpan} className="flex flex-col gap-4">
           
           <input name="nominal" type="text" inputMode="numeric" 
           onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.') }} 
-          placeholder="NOMINAL (Rp)" className="w-full h-14 px-4 bg-[#F5F5F7] border border-gray-200 rounded-xl text-center font-bold text-lg outline-none focus:border-green-500" />
+          placeholder="Nominal" className="w-full h-14 px-4 bg-[#F5F5F7] border border-gray-200 rounded-xl text-center font-bold text-lg outline-none focus:border-green-500" />
           
           <select name="kategori" defaultValue="" className="w-full h-14 px-4 bg-[#F5F5F7] border border-gray-200 rounded-xl font-bold text-sm outline-none focus:border-green-500 text-center text-gray-500 uppercase">
-            <option value="" disabled>-- PILIH SUMBER DANA --</option>
+            <option value="" disabled>Sumber Dana</option>
             {kategoriList.map(k => <option key={k.id} value={k.id}>{k.nama_kategori}</option>)}
           </select>
           
-          <input name="catatan" type="text" placeholder="CATATAN (OPSIONAL)" className="w-full h-14 px-4 bg-[#F5F5F7] border border-gray-200 rounded-xl text-center font-bold text-xs uppercase outline-none focus:border-green-500" />
+          <input name="catatan" type="text" placeholder="CATATAN" className="w-full h-14 px-4 bg-[#F5F5F7] border border-gray-200 rounded-xl text-center font-bold text-xs uppercase outline-none focus:border-green-500" />
 
           <button type="submit" className="w-full h-14 bg-gradient-to-br from-green-600 to-green-500 text-white font-bold text-sm uppercase rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition-all mt-4">
-            SIMPAN UANG MASUK
+            SIMPAN
           </button>
           <Link href="/dashboard" className="w-full h-14 flex items-center justify-center bg-white border border-gray-200 text-gray-500 font-bold text-xs uppercase rounded-xl hover:bg-gray-50 active:scale-95 transition-all">
             BATAL

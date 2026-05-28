@@ -38,9 +38,9 @@ export default function Home() {
     }
 
     const { value: pin } = await swalUI.fire({
-      title: `BUKA BRANKAS`,
+      title: `LOGIN`,
       input: 'password',
-      inputPlaceholder: 'MASUKKAN PIN (6 DIGIT)',
+      inputPlaceholder: 'Masukkan PIN',
       showCancelButton: true,
       confirmButtonText: 'MASUK',
       cancelButtonText: 'BATAL',
@@ -88,9 +88,9 @@ export default function Home() {
           <div className="absolute top-0 h-full w-[50%] bg-white/5 animate-[shine-glossy_4s_infinite]"></div>
         </div>
         <div className="relative z-30 flex flex-col items-center justify-center w-full mt-1">
-          <h2 className="text-white font-bold text-[15px] md:text-[18px] uppercase drop-shadow-sm whitespace-nowrap">E-FINANCE VAULT</h2>
+          <h2 className="text-white font-bold text-[15px] md:text-[18px] uppercase drop-shadow-sm whitespace-nowrap">DIGITAL FINANCE</h2>
           <p className="text-gray-400 text-[9px] font-bold uppercase opacity-90 tracking-widest mt-1">
-            PENCATATAN KEUANGAN PRIBADI
+            CATATAN KEUANGAN PRIBADI
           </p>
         </div>
       </header>
@@ -100,8 +100,8 @@ export default function Home() {
         <div className="w-full overflow-hidden opacity-90 mb-8" style={{ maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)' }}>
           <div className="inline-block whitespace-nowrap animate-[marquee-single_12s_linear_infinite]">
             <h1 className="inline-block text-[#1D1D1F] font-bold text-sm md:text-base uppercase drop-shadow-sm">
-              SECURE DIGITAL VAULT <span className="font-['Cinzel'] ml-2 mr-8 animate-[neon-gold-blink_1.5s_infinite]">REAL-TIME</span>
-              SECURE DIGITAL VAULT <span className="font-['Cinzel'] ml-2 mr-8 animate-[neon-gold-blink_1.5s_infinite]">REAL-TIME</span>
+              Secure Digital Finance <span className="font-['Cinzel'] ml-2 mr-8 animate-[neon-gold-blink_1.5s_infinite]">LIVE</span>
+              Secure Digital Finance <span className="font-['Cinzel'] ml-2 mr-8 animate-[neon-gold-blink_1.5s_infinite]">LIVE</span>
             </h1>
           </div>
         </div>
@@ -118,13 +118,13 @@ export default function Home() {
             disabled={lockoutTime > 0} 
             className={`relative w-full h-14 rounded-xl font-bold text-[12px] uppercase transition-all duration-200 shadow-xl flex items-center justify-center px-5 tracking-wider ${lockoutTime === 0 ? 'bg-gradient-to-br from-[#1D1D1F] to-[#4B5563] text-white active:scale-[0.98] hover:shadow-2xl' : 'bg-white text-gray-400 border border-gray-200 cursor-not-allowed'}`}
           >
-            LOGIN BRANKAS
+            LOGIN
           </button>
         </div>
       </div>
 
       <footer className="mt-auto pb-6 text-center z-10">
-        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">E-FINANCE © 2026</p>
+        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">IRVAN AFFANDI © 2026</p>
       </footer>
     </main>
   )

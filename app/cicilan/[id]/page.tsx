@@ -56,17 +56,16 @@ export default function CicilanDetailPage() {
     const htmlForm = `
       <input id="swal-nominal" type="text" inputmode="numeric" value="${formatAwal}" 
       oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.')" 
-      placeholder="NOMINAL UANG (Rp)" class="w-full h-12 px-4 bg-[#F5F5F7] border border-gray-200 rounded-xl text-center font-bold text-[#1D1D1F] outline-none focus:border-blue-500 mb-4">
+      placeholder="Jumlah" class="w-full h-12 px-4 bg-[#F5F5F7] border border-gray-200 rounded-xl text-center font-bold text-[#1D1D1F] outline-none focus:border-blue-500 mb-4">
       
       <label class="flex items-center justify-center gap-2 text-[10px] font-bold text-[#1D1D1F] uppercase cursor-pointer bg-blue-50 py-3 rounded-xl border border-blue-100">
         <input id="swal-potong" type="checkbox" checked class="w-4 h-4 accent-blue-600 cursor-pointer">
-        POTONG SALDO AKTIF HARI INI?
+        POTONG SALDO ?
       </label>
-      <p class="text-[8px] font-bold text-red-500 text-center mt-2 uppercase tracking-widest">(Hapus centang jika ini editan riwayat masa lalu!)</p>
     `
 
     const { value: form } = await Swal.fire({
-      title: `SETOR BULAN KE-${d.bulan_ke}`, html: htmlForm, showCancelButton: true, confirmButtonText: 'SIMPAN DATA', buttonsStyling: false,
+      title: `Setor bulan ke - ${d.bulan_ke}`, html: htmlForm, showCancelButton: true, confirmButtonText: 'SIMPAN', buttonsStyling: false,
       customClass: { confirmButton: 'bg-blue-600 text-white font-bold w-full rounded-xl py-3 mt-3 text-[10px]', cancelButton: 'bg-gray-100 text-gray-500 font-bold w-full rounded-xl py-3 mt-3 text-[10px]', popup: 'rounded-[1.5rem]' },
       preConfirm: () => { 
         const nom = Number((document.getElementById('swal-nominal') as HTMLInputElement).value.replace(/\./g, ''))
@@ -120,53 +119,53 @@ export default function CicilanDetailPage() {
           <Link href="/cicilan" className="w-10 h-10 bg-white border border-gray-200 rounded-xl flex items-center justify-center font-bold shadow-sm active:scale-95 transition-all">←</Link>
           <div>
             <h1 className="font-bold text-[16px] text-blue-800 uppercase">{master?.nama_kreditur}</h1>
-            <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-0.5">WAJIB: {formatRupiah(master?.cicilan_wajib_per_bulan)} / BLN</p>
+            <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-0.5">JUMLAH : {formatRupiah(master?.cicilan_wajib_per_bulan)} / Bulan</p>
           </div>
         </div>
         <button onClick={handleEditMaster} className="bg-blue-50 text-blue-600 border border-blue-200 text-[9px] font-bold px-4 py-2 rounded-lg uppercase tracking-widest hover:bg-blue-100 active:scale-95 transition-all">
-          EDIT MASTER
+          EDIT
         </button>
       </header>
 
       {/* PAPAN REKAPITULASI DETAIL FULL SPEK BANK */}
       <div className="bg-white p-5 rounded-[1.2rem] shadow-sm border border-gray-200 mb-6 flex flex-col gap-5">
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-bold bg-blue-100 text-blue-800 px-3 py-1 rounded-md uppercase tracking-widest">DETAIL PINJAMAN & BUNGA BANK</span>
+          <span className="text-[10px] font-bold bg-blue-100 text-blue-800 px-3 py-1 rounded-md uppercase tracking-widest">DETAIL PINJAMAN</span>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6 border-b border-gray-100 pb-5">
           <div className="flex flex-col">
-            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">POKOK MURNI</span>
+            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">POKOK</span>
             <span className="font-bold text-[13px] text-[#1D1D1F]">{formatRupiah(master?.total_pinjaman || 0)}</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">BEBAN BUNGA</span>
+            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">BUNGA</span>
             <span className="font-bold text-[13px] text-red-500">+{formatRupiah(totalBunga)}</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">TOTAL KEWAJIBAN</span>
+            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">TOTAL</span>
             <span className="font-bold text-[13px] text-red-600">{formatRupiah(totalKewajiban)}</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">SUDAH DIBAYAR</span>
+            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">SUDAH BAYAR</span>
             <span className="font-bold text-[13px] text-green-600">{formatRupiah(totalBayar)}</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">SISA UTANG</span>
+            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">SISA</span>
             <span className="font-bold text-[13px] text-red-600">{formatRupiah(sisaKewajiban)}</span>
           </div>
           <div className="flex flex-col">
             <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">SELESAI PADA</span>
-            <span className="font-bold text-[13px] text-[#1D1D1F]">{estimasiLunas} <span className="text-gray-400 text-[10px]">({master?.tenor_bulan} BLN)</span></span>
+            <span className="font-bold text-[13px] text-[#1D1D1F]">{estimasiLunas} <span className="text-gray-400 text-[10px]">( {master?.tenor_bulan} BULAN )</span></span>
           </div>
         </div>
         
         <div className="flex flex-col gap-2">
           <span className="text-[9px] font-bold text-red-500 uppercase tracking-widest flex items-center gap-1">
-            ⚠️ DETEKTOR KURANG BAYAR ({listKurang.length} BULAN)
+            Detektor ({listKurang.length} BULAN)
           </span>
           {listKurang.length === 0 ? (
-            <p className="text-[10px] font-bold text-green-600 bg-green-50 px-3 py-2 rounded-lg inline-block w-fit">BERSIH. TIDAK ADA TUNGGAKAN.</p>
+            <p className="text-[10px] font-bold text-green-600 bg-green-50 px-3 py-2 rounded-lg inline-block w-fit">TIDAK ADA TUNGGAKAN</p>
           ) : (
             <div className="flex flex-wrap gap-2">
               {listKurang.map(k => {
@@ -196,8 +195,8 @@ export default function CicilanDetailPage() {
           return (
             <div key={d.id} onClick={() => handleSetor(d)} className={`border rounded-[1rem] p-4 flex justify-between items-center cursor-pointer hover:shadow-md transition-all active:scale-95 ${boxStyle}`}>
               <div className="flex flex-col">
-                <p className="font-bold text-[12px] uppercase">BULAN KE-{d.bulan_ke}</p>
-                <p className="text-[9px] font-bold text-gray-500 uppercase mt-1">TEMPO: {new Date(d.tanggal_jatuh_tempo).toLocaleDateString('id-ID', { month: 'short', year: 'numeric' })}</p>
+                <p className="font-bold text-[12px]">Bulan ke - {d.bulan_ke}</p>
+                <p className="text-[9px] font-bold text-gray-500 uppercase mt-1">TEMPO : {new Date(d.tanggal_jatuh_tempo).toLocaleDateString('id-ID', { month: 'short', year: 'numeric' })}</p>
               </div>
               <div className="text-right flex flex-col items-end">
                 <span className={`text-[8px] font-bold px-2 py-1 bg-white rounded shadow-sm border mb-1 uppercase ${textStatus}`}>{d.status}</span>

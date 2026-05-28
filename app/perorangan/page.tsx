@@ -30,13 +30,13 @@ export default function PeroranganPage() {
 
   const handleTambah = async () => {
     const htmlForm = `
-      <input id="swal-nama" type="text" placeholder="NAMA TEMAN / KREDITUR" class="w-full h-12 px-4 mb-3 bg-[#F5F5F7] border border-gray-200 rounded-xl text-center font-bold text-[#1D1D1F] uppercase outline-none focus:border-purple-500">
-      <input id="swal-pokok" type="text" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.')" placeholder="TOTAL UTANG (Rp)" class="w-full h-12 px-4 mb-3 bg-[#F5F5F7] border border-gray-200 rounded-xl text-center font-bold text-[#1D1D1F] outline-none focus:border-purple-500">
-      <p class="text-[9px] font-bold text-gray-400 mt-2 mb-1">TANGGAL JATJI BAYAR / JATUH TEMPO:</p>
+      <input id="swal-nama" type="text" placeholder="Nama" class="w-full h-12 px-4 mb-3 bg-[#F5F5F7] border border-gray-200 rounded-xl text-center font-bold text-[#1D1D1F] uppercase outline-none focus:border-purple-500">
+      <input id="swal-pokok" type="text" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.')" placeholder="Jumlah" class="w-full h-12 px-4 mb-3 bg-[#F5F5F7] border border-gray-200 rounded-xl text-center font-bold text-[#1D1D1F] outline-none focus:border-purple-500">
+      <p class="text-[9px] font-bold text-gray-400 mt-2 mb-1">JATUH TEMPO :</p>
       <input id="swal-tempo" type="date" class="w-full h-12 px-4 bg-[#F5F5F7] border border-gray-200 rounded-xl text-center font-bold text-sm text-[#1D1D1F] outline-none focus:border-purple-500">
     `
     const { value: form } = await Swal.fire({
-      title: 'CATAT UTANG BARU', html: htmlForm, showCancelButton: true, confirmButtonText: 'SIMPAN', cancelButtonText: 'BATAL', customClass: baseSwalClass, buttonsStyling: false,
+      title: 'CATAT UTANG', html: htmlForm, showCancelButton: true, confirmButtonText: 'SIMPAN', cancelButtonText: 'BATAL', customClass: baseSwalClass, buttonsStyling: false,
       preConfirm: () => {
         const nama = (document.getElementById('swal-nama') as HTMLInputElement).value
         const rawPokok = (document.getElementById('swal-pokok') as HTMLInputElement).value.replace(/\./g, '')
@@ -106,7 +106,7 @@ export default function PeroranganPage() {
       <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-100 px-5 py-4 flex justify-between items-center shadow-sm">
         <div>
           <h1 className="font-bold text-[15px] uppercase tracking-wider text-purple-800">UTANG PERORANGAN</h1>
-          <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">MANAJEMEN JALUR PRIBADI</p>
+          <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-0.5"></p>
         </div>
         <Link href="/dashboard" className="h-8 px-4 flex items-center justify-center bg-[#F5F5F7] border border-gray-200 hover:bg-gray-200 text-[#1D1D1F] font-bold text-[9px] uppercase rounded-full transition-all active:scale-95 shadow-sm">
           KEMBALI
@@ -116,7 +116,7 @@ export default function PeroranganPage() {
       <div className="w-full max-w-2xl mx-auto px-5 mt-6 flex flex-col gap-4">
         {utang.length === 0 ? (
           <div className="bg-white border border-purple-100 rounded-[1.5rem] p-8 text-center shadow-sm">
-            <p className="text-[10px] font-bold text-purple-400 uppercase tracking-widest">AMAN. TIDAK ADA UTANG PRIBADI.</p>
+            <p className="text-[10px] font-bold text-purple-400 uppercase tracking-widest">TIDAK ADA UTANG</p>
           </div>
         ) : (
           utang.map((u) => (
@@ -127,7 +127,7 @@ export default function PeroranganPage() {
                 <div>
                   <h2 className="font-bold text-[14px] uppercase tracking-wide text-[#1D1D1F]">{u.nama_kreditur}</h2>
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mt-1">
-                    SISA UTANG: <span className="text-purple-600">{formatRupiah(Number(u.sisa_utang))}</span>
+                    Jumlah : <span className="text-purple-600">{formatRupiah(Number(u.sisa_utang))}</span>
                   </p>
                 </div>
                 <button onClick={() => handleHapus(u.id)} className="w-8 h-8 flex items-center justify-center bg-red-50 text-red-600 rounded-lg hover:bg-red-100 active:scale-95 transition-all text-xs border border-red-100">🗑️</button>
@@ -143,7 +143,7 @@ export default function PeroranganPage() {
               </div>
 
               <button onClick={() => handleBayar(u.id, u.nama_kreditur, Number(u.sisa_utang))} className="w-full h-12 bg-gradient-to-br from-purple-700 to-purple-500 text-white font-bold text-[10px] uppercase rounded-xl shadow-md hover:shadow-lg active:scale-95 transition-all relative z-10 tracking-widest">
-                BAYAR UTANG SEKARANG
+                BAYAR
               </button>
             </div>
           ))

@@ -36,17 +36,17 @@ export default function PembayaranPage() {
 
   const formatRupiah = (a: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(a)
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center font-bold">MENYISIR TAGIHAN...</div>
+  if (loading) return <div className="min-h-screen flex items-center justify-center font-bold">Processing...</div>
 
   return (
     <main className="min-h-screen bg-[#FBFBFD] p-5">
       <header className="flex justify-between items-center mb-6">
-        <h1 className="font-bold text-lg text-red-600 uppercase">PUSAT KOMANDO TAGIHAN</h1>
+        <h1 className="font-bold text-lg text-red-600 uppercase">DATA TAGIHAN</h1>
         <Link href="/dashboard" className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-[10px] font-bold">KEMBALI</Link>
       </header>
 
       <div className="flex flex-col gap-6">
-        {['TUNGGAKAN (HARUS DIBAYAR SEKARANG)', 'BULAN INI (JATUH TEMPO)', 'BULAN DEPAN (PERSIAPAN)'].map((label, idx) => {
+        {['TUNGGAKAN', 'BULAN INI', 'BULAN DEPAN'].map((label, idx) => {
           const list = [data.tunggakan, data.bulanIni, data.bulanDepan][idx]
           return (
             <div key={label}>
@@ -56,7 +56,7 @@ export default function PembayaranPage() {
                   <div key={i} className="bg-white p-4 rounded-xl border border-gray-200 flex justify-between">
                     <div>
                       <p className="font-bold text-[12px]">{t.nama}</p>
-                      <p className="text-[9px] text-gray-400">Tempo: {t.tempo.toLocaleDateString('id-ID')}</p>
+                      <p className="text-[9px] text-gray-400">Tempo : {t.tempo.toLocaleDateString('id-ID')}</p>
                     </div>
                     <p className="font-bold text-red-600">{formatRupiah(t.beban)}</p>
                   </div>
