@@ -25,21 +25,30 @@ export default function Home() {
     setTimeout(() => setTapCount(0), 2000) 
   }
 
+  // SIPEKAT SWEETALERT STYLE
   const baseSwalClass = {
-    popup: '!max-w-[420px] rounded-[1.5rem] border border-gray-200 shadow-2xl bg-white p-5',
-    title: 'text-[#1D1D1F] font-bold uppercase text-[15px] drop-shadow-sm mb-2',
-    actions: 'w-full flex gap-3 mt-5',
-    confirmButton: 'flex-1 h-12 flex items-center justify-center bg-gradient-to-br from-[#1D1D1F] to-[#4B5563] text-white font-bold text-[10px] uppercase px-5 rounded-xl shadow-sm hover:shadow-md active:scale-95 transition-all duration-200',
-    cancelButton: 'flex-1 h-12 flex items-center justify-center bg-white border border-gray-200 text-gray-500 font-bold text-[10px] uppercase px-5 rounded-xl shadow-sm hover:bg-slate-50 active:scale-95 transition-all duration-200',
-    validationMessage: 'bg-red-50 text-red-600 font-bold text-[10px] uppercase rounded-xl border border-red-200 mt-3 py-2 px-3 shadow-sm'
+    popup: '!max-w-[380px] !rounded-[2rem] border border-gray-200 shadow-2xl bg-white p-6',
+    title: 'text-[#1D1D1F] font-black uppercase text-[12px] tracking-widest mb-4',
+    actions: 'w-full flex flex-col gap-2 mt-5',
+    confirmButton: 'w-full h-10 flex items-center justify-center bg-[#0B214A] text-white font-black text-[10px] tracking-[0.15em] uppercase px-5 rounded-xl shadow-sm hover:bg-blue-900 active:scale-95 transition-all duration-200',
+    cancelButton: 'w-full h-10 flex items-center justify-center bg-[#F5F5F7] border border-transparent text-gray-500 font-black text-[10px] tracking-[0.15em] uppercase px-5 rounded-xl hover:bg-gray-200 active:scale-95 transition-all duration-200',
+    validationMessage: 'bg-red-50 text-red-600 font-black text-[9px] tracking-widest uppercase rounded-xl border border-red-200 mt-3 py-2 px-3 shadow-sm'
   }
 
   const handleLogin = async () => {
     const { value: formValues } = await Swal.fire({
       title: 'OTORISASI SISTEM',
       html: `
-        <input id="swal-email" type="email" placeholder="EMAIL SUPABASE" class="w-full h-12 px-4 mb-3 bg-[#F5F5F7] border border-gray-200 rounded-xl text-center font-bold text-[#1D1D1F] outline-none focus:border-blue-500 text-[12px] placeholder:text-gray-400 tracking-wider">
-        <input id="swal-pass" type="password" placeholder="PASSWORD" class="w-full h-12 px-4 bg-[#F5F5F7] border border-gray-200 rounded-xl text-center font-bold text-[#1D1D1F] outline-none focus:border-blue-500 text-[12px] placeholder:text-gray-400 tracking-wider">
+        <div class="flex flex-col gap-3">
+          <div class="text-left">
+            <label class="text-[9px] font-black text-gray-400 tracking-[0.15em] uppercase mb-1.5 block">Email Akses</label>
+            <input id="swal-email" type="email" placeholder="ADMIN@DOMAIN.COM" class="w-full h-10 px-4 bg-[#F5F5F7] border border-transparent focus:border-blue-500 focus:bg-white rounded-xl text-center font-black text-[#1D1D1F] outline-none text-[10px] placeholder:text-gray-300 placeholder:font-bold tracking-widest transition-all">
+          </div>
+          <div class="text-left">
+            <label class="text-[9px] font-black text-gray-400 tracking-[0.15em] uppercase mb-1.5 block">Security Key</label>
+            <input id="swal-pass" type="password" placeholder="••••••••" class="w-full h-10 px-4 bg-[#F5F5F7] border border-transparent focus:border-blue-500 focus:bg-white rounded-xl text-center font-black text-[#1D1D1F] outline-none text-[14px] tracking-[0.5em] placeholder:text-gray-300 transition-all">
+          </div>
+        </div>
       `,
       showCancelButton: true, confirmButtonText: 'BUKA BRANKAS', cancelButtonText: 'BATAL', customClass: baseSwalClass, buttonsStyling: false,
       preConfirm: async () => {
@@ -62,7 +71,7 @@ export default function Home() {
 
   const handleLogout = async () => {
     const res = await Swal.fire({ 
-      title: 'KUNCI BRANKAS?', showCancelButton: true, confirmButtonText: 'KUNCI', cancelButtonText: 'BATAL', customClass: baseSwalClass, buttonsStyling: false 
+      title: 'KUNCI BRANKAS?', showCancelButton: true, confirmButtonText: 'KUNCI SEKARANG', cancelButtonText: 'BATAL', customClass: { ...baseSwalClass, confirmButton: baseSwalClass.confirmButton.replace('bg-[#0B214A]', 'bg-red-600').replace('hover:bg-blue-900', 'hover:bg-red-700') }, buttonsStyling: false 
     })
     if (res.isConfirmed) {
       Swal.showLoading()
@@ -72,76 +81,89 @@ export default function Home() {
     }
   }
 
+  // GLOWING MENU SIPEKAT STYLE
   const menus = [
-    { id: 'DASHBOARD', path: '/dashboard', label: 'DASHBOARD ANALITIK', color: 'from-[#1D1D1F] to-[#4B5563]' },
-    { id: 'TAGIHAN', path: '/pembayaran', label: 'PUSAT TAGIHAN', color: 'from-red-600 to-red-500' },
-    { id: 'CICILAN', path: '/cicilan', label: 'MANAJEMEN CICILAN', color: 'from-blue-600 to-blue-500' },
-    { id: 'PEMASUKAN', path: '/pemasukan', label: 'CATAT PEMASUKAN', color: 'from-green-600 to-green-500' },
-    { id: 'PENGELUARAN', path: '/pengeluaran', label: 'CATAT PENGELUARAN', color: 'from-orange-500 to-orange-400' },
+    { id: 'DASHBOARD', path: '/dashboard', label: 'DASHBOARD ANALITIK', colorBg: 'bg-[#0B214A]', colorBorder: 'border-blue-400/20', colorGlow: 'bg-blue-600/30' },
+    { id: 'TAGIHAN', path: '/pembayaran', label: 'PUSAT TAGIHAN', colorBg: 'bg-red-600', colorBorder: 'border-red-500', colorGlow: 'bg-red-500/30' },
+    { id: 'CICILAN', path: '/cicilan', label: 'MANAJEMEN CICILAN', colorBg: 'bg-blue-600', colorBorder: 'border-blue-500', colorGlow: 'bg-blue-500/30' },
+    { id: 'PEMASUKAN', path: '/pemasukan', label: 'CATAT PEMASUKAN', colorBg: 'bg-green-600', colorBorder: 'border-green-500', colorGlow: 'bg-green-500/30' },
+    { id: 'PENGELUARAN', path: '/pengeluaran', label: 'CATAT PENGELUARAN', colorBg: 'bg-orange-600', colorBorder: 'border-orange-500', colorGlow: 'bg-orange-500/30' },
   ]
 
   return (
-    <main className="min-h-screen bg-[#FBFBFD] text-[#1D1D1F] flex flex-col items-center relative overflow-x-hidden font-sans selection:bg-gray-200">
+    <main className="min-h-screen bg-[#FBFBFD] text-[#1D1D1F] flex flex-col items-center relative overflow-x-hidden font-sans selection:bg-blue-100">
       <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet" />
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes marquee-single { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         @keyframes shine-glossy { 0% { transform: translateX(-100%) skewX(-20deg); } 100% { transform: translateX(200%) skewX(-20deg); } }
-        @keyframes neon-gold-blink { 0%, 100% { opacity: 1; text-shadow: 0 0 10px rgba(234,179,8,0.8); color: #eab308; } 50% { opacity: 0.7; text-shadow: 0 0 3px rgba(161,98,7,0.5); color: #a16207; } }
+        @keyframes neon-status-blink { 0%, 100% { opacity: 1; text-shadow: 0 0 8px currentColor, 0 0 15px currentColor; } 50% { opacity: 0.4; text-shadow: 0 0 2px currentColor; } }
       `}} />
 
-      <header className="sticky top-0 z-50 w-full h-[85px] md:h-[100px] flex flex-col items-center justify-center text-center px-4 flex-shrink-0 transition-all duration-300">
-        <div className="absolute inset-0 bg-[#1D1D1F] rounded-b-[2rem] shadow-md overflow-hidden">
-          <div className="absolute top-0 h-full w-[50%] bg-white/5 animate-[shine-glossy_4s_infinite]"></div>
+      {/* SIPEKAT U-SHAPE HEADER */}
+      <header className="w-full relative z-20 flex justify-center">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0B214A] via-[#1E3A8A] to-[#0B214A] h-[120px] rounded-b-[2.5rem] shadow-[0_10px_30px_rgba(30,58,138,0.3)] border-b border-blue-300/30 overflow-hidden">
+          <div className="absolute top-0 h-full w-[50%] bg-gradient-to-r from-transparent via-white/[0.15] to-transparent animate-[shine-glossy_4s_infinite]"></div>
         </div>
         
-        {/* TOMBOL HEADER DARURAT (HANYA MUNCUL KALAU LOGIN) */}
+        {/* TOMBOL HEADER SIPEKAT STYLE */}
         {isLoggedIn && (
-          <div className="absolute top-4 right-5 z-40 flex gap-2">
-            <button onClick={() => router.push('/kategori')} className="bg-blue-600/20 border border-blue-500/50 text-white font-bold text-[8px] px-3 py-1.5 rounded-full uppercase tracking-widest hover:bg-blue-600 transition-all shadow-sm">
+          <div className="absolute top-4 right-4 z-40 flex gap-2">
+            <button onClick={() => router.push('/kategori')} className="bg-white/10 backdrop-blur-md border border-white/20 text-white font-black text-[7px] px-3 py-2 rounded-lg uppercase tracking-[0.2em] hover:bg-white/20 transition-all shadow-sm">
               KATEGORI
             </button>
-            <button onClick={handleLogout} className="bg-red-600/20 border border-red-500/50 text-white font-bold text-[8px] px-3 py-1.5 rounded-full uppercase tracking-widest hover:bg-red-600 transition-all shadow-sm">
+            <button onClick={handleLogout} className="bg-red-500/80 backdrop-blur-md border border-red-400/50 text-white font-black text-[7px] px-3 py-2 rounded-lg uppercase tracking-[0.2em] hover:bg-red-600 transition-all shadow-sm">
               LOCK
             </button>
           </div>
         )}
 
-        <div className="relative z-30 flex flex-col items-center justify-center w-full mt-1">
-          <h2 className="text-white font-bold text-[15px] md:text-[18px] uppercase drop-shadow-sm whitespace-nowrap">DIGITAL FINANCE</h2>
-          <p onClick={handleSecretTap} className="text-gray-400 text-[9px] font-bold uppercase opacity-90 tracking-widest mt-1 p-2 -my-2 cursor-pointer active:scale-95 transition-all duration-200 select-none">
+        <div className="relative z-30 flex flex-col items-center justify-center h-[120px] pt-2">
+          <h2 className="text-white font-black text-[15px] tracking-[0.4em] uppercase text-center drop-shadow-md leading-none mt-1">
+            DIGITAL FINANCE
+          </h2>
+          <p onClick={handleSecretTap} className="text-blue-200 text-[8px] font-bold tracking-[0.3em] uppercase opacity-90 leading-none mt-2 cursor-pointer select-none">
             CATATAN KEUANGAN PRIBADI
           </p>
         </div>
       </header>
 
-      <div className="flex-1 w-full max-w-[400px] flex flex-col items-center justify-start px-5 pt-6 pb-6 z-10">
-        <div className="w-full overflow-hidden opacity-90 mb-8" style={{ maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)' }}>
+      <div className="flex-1 w-full max-w-[420px] flex flex-col items-center justify-start gap-10 px-8 pt-8 pb-6 relative z-10">
+        
+        {/* MARQUEE SIPEKAT STYLE */}
+        <div className="w-full overflow-hidden relative opacity-90" style={{ maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)' }}>
           <div className="inline-block whitespace-nowrap animate-[marquee-single_12s_linear_infinite]">
-            <h1 className="inline-block text-[#1D1D1F] font-bold text-sm md:text-base uppercase drop-shadow-sm">
-              Secure Digital Finance <span className="font-['Cinzel'] ml-2 mr-8 animate-[neon-gold-blink_1.5s_infinite]">{isLoggedIn ? 'LIVE' : 'LOCKED'}</span>
-              Secure Digital Finance <span className="font-['Cinzel'] ml-2 mr-8 animate-[neon-gold-blink_1.5s_infinite]">{isLoggedIn ? 'LIVE' : 'LOCKED'}</span>
+            <h1 className="inline-block text-[#1D1D1F] font-black text-[16px] tracking-tight uppercase">
+              SYSTEM SECURITY <span className={`font-['Cinzel'] ml-3 mr-12 animate-[neon-status-blink_1.5s_infinite] ${isLoggedIn ? 'text-green-500' : 'text-red-500'}`}>{isLoggedIn ? 'LIVE' : 'LOCKED'}</span>
+              SYSTEM SECURITY <span className={`font-['Cinzel'] ml-3 mr-12 animate-[neon-status-blink_1.5s_infinite] ${isLoggedIn ? 'text-green-500' : 'text-red-500'}`}>{isLoggedIn ? 'LIVE' : 'LOCKED'}</span>
             </h1>
           </div>
         </div>
 
-        <div className="w-full flex flex-col gap-3 mt-auto">
+        {/* GLOWING BUTTON AREA */}
+        <div className="w-full flex flex-col gap-4 mt-auto">
           {menus.map((btn) => (
-            <button 
-              key={btn.id}
-              onClick={() => router.push(btn.path)}
-              disabled={!isLoggedIn} 
-              className={`relative w-full h-14 rounded-xl font-bold text-[11px] uppercase transition-all duration-200 shadow-sm flex items-center justify-between px-5 tracking-widest
-                ${isLoggedIn ? `bg-gradient-to-br ${btn.color} text-white active:scale-[0.98] hover:shadow-lg border-transparent` : 'bg-white text-gray-400 border border-gray-200 cursor-not-allowed'}`}
-            >
-              {btn.label}
-              {!isLoggedIn && <span className="text-[8px] bg-[#F5F5F7] text-gray-400 px-2 py-1 rounded-md uppercase border border-gray-200">LOCKED</span>}
-            </button>
+            <div key={btn.id} className="relative group w-full">
+              {isLoggedIn && <div className={`absolute -inset-1 ${btn.colorGlow} blur-xl rounded-full opacity-60 group-hover:opacity-100 transition duration-500`}></div>}
+              <button 
+                onClick={() => router.push(btn.path)}
+                disabled={!isLoggedIn} 
+                className={`relative w-full ${isLoggedIn ? btn.colorBg : 'bg-[#F5F5F7]'} ${isLoggedIn ? 'text-white' : 'text-gray-400'} py-4 rounded-[1.2rem] font-black tracking-[0.15em] text-[11px] border ${isLoggedIn ? btn.colorBorder : 'border-gray-200'} active:scale-95 transition-all flex items-center justify-center gap-2 ${!isLoggedIn && 'cursor-not-allowed shadow-inner'}`}
+              >
+                {btn.label}
+                {isLoggedIn ? (
+                  <svg className="w-4 h-4 opacity-60 absolute right-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"></path></svg>
+                ) : (
+                  <span className="absolute right-5 text-[7px] bg-gray-200 text-gray-500 px-2 py-1 rounded-md uppercase border border-gray-300 tracking-widest font-black">LOCKED</span>
+                )}
+              </button>
+            </div>
           ))}
         </div>
       </div>
 
-      <footer className="mt-auto pb-6 text-center z-10">
-        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">IRVAN AFFANDI © 2026</p>
+      <footer className="mt-auto pb-8 pt-4 flex flex-col items-center w-full relative z-10">
+        <p className="text-[6px] font-black tracking-[0.6em] text-slate-400 uppercase text-center mb-1">OWNER</p>
+        <h3 className="text-[#1D1D1F]/50 font-black text-[9px] tracking-[0.3em] uppercase">IRVAN AFFANDI | 2026</h3>
       </footer>
     </main>
   )

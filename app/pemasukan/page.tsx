@@ -12,12 +12,14 @@ export default function PemasukanPage() {
   const loadData = async () => {
     const [katRes, txRes] = await Promise.all([getKategori(), getTransaksiHarian()])
     setKategoriList((katRes.kategori || []).filter((k: any) => k.tipe === 'PEMASUKAN'))
-    // LIMITASI UI: Potong paksa, cuma render 50 baris teratas biar RAM HP ga jebol
     setTransaksi((txRes.transaksi || []).filter((t: any) => t.kategori?.tipe === 'PEMASUKAN').slice(0, 50))
     setLoading(false)
   }
 
   useEffect(() => { loadData() }, [])
+
+  // SIPEKAT SWEETALERT STYLE
+  const baseSwalClass = { popup: '!max-w-[380px] !rounded-[2rem] border border-gray-200 shadow-2xl bg-white p-5', title: 'text-[#1D1D1F] font-black uppercase text-[12px] tracking-widest mb-3', actions: 'w-full flex flex-col gap-2 mt-4', confirmButton: 'w-full h-10 flex items-center justify-center bg-green-600 text-white font-black text-[10px] tracking-[0.15em] uppercase px-5 rounded-xl shadow-sm hover:bg-green-700 active:scale-95 transition-all duration-200', cancelButton: 'w-full h-10 flex items-center justify-center bg-[#F5F5F7] text-gray-500 font-black text-[10px] tracking-[0.15em] uppercase px-5 rounded-xl hover:bg-gray-200 active:scale-95 transition-all duration-200' }
 
   const handleSimpan = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -27,7 +29,7 @@ export default function PemasukanPage() {
     const katId = (form.elements.namedItem('kategori') as HTMLSelectElement).value
     const catatan = (form.elements.namedItem('catatan') as HTMLInputElement).value
 
-    if (!nominal || !katId) return Swal.fire('GAGAL', 'NOMINAL & KATEGORI WAJIB DIISI!', 'error')
+    if (!nominal || !katId) return Swal.fire({ title: 'GAGAL', text: 'NOMINAL & KATEGORI WAJIB DIISI!', icon: 'error', customClass: baseSwalClass, buttonsStyling: false })
 
     Swal.showLoading()
     const res = await tambahTransaksiHarian(nominal, catatan, katId)
@@ -36,7 +38,7 @@ export default function PemasukanPage() {
       await loadData()
       Swal.fire({ title: 'TERCATAT!', icon: 'success', timer: 1000, showConfirmButton: false })
     } else {
-      Swal.fire('ERROR', res.message, 'error')
+      Swal.fire({ title: 'ERROR', text: res.message, icon: 'error', customClass: baseSwalClass, buttonsStyling: false })
     }
   }
 
@@ -45,17 +47,16 @@ export default function PemasukanPage() {
   const handleAksi = async (t: any) => {
     const aksi = await Swal.fire({
       title: 'OPSI DATA', text: `${t.kategori?.nama_kategori} - ${formatRupiah(t.nominal)}`,
-      showCancelButton: true, showDenyButton: true, confirmButtonText: 'EDIT', denyButtonText: 'HAPUS', cancelButtonText: 'BATAL',
-      customClass: { popup: '!rounded-[1.5rem] !p-5', confirmButton: '!bg-green-600 !text-white !font-bold !rounded-xl !px-5 !py-3 w-full mb-2', denyButton: '!bg-red-600 !text-white !font-bold !rounded-xl !px-5 !py-3 w-full mb-2', cancelButton: '!bg-gray-100 !text-gray-500 !font-bold !rounded-xl !px-5 !py-3 w-full', actions: '!flex !flex-col w-full' }, buttonsStyling: false
+      showCancelButton: true, showDenyButton: true, confirmButtonText: 'EDIT DATA', denyButtonText: 'HAPUS DATA', cancelButtonText: 'BATAL',
+      customClass: { popup: baseSwalClass.popup, title: baseSwalClass.title, confirmButton: baseSwalClass.confirmButton.replace('bg-green-600', 'bg-blue-600').replace('hover:bg-green-700', 'hover:bg-blue-700'), denyButton: baseSwalClass.confirmButton.replace('bg-green-600', 'bg-red-600').replace('hover:bg-green-700', 'hover:bg-red-700'), cancelButton: baseSwalClass.cancelButton, actions: baseSwalClass.actions }, buttonsStyling: false
     })
 
     if (aksi.isConfirmed) {
       const optionsHtml = kategoriList.map(k => `<option value="${k.id}" ${k.id === t.kategori_id ? 'selected' : ''}>${k.nama_kategori}</option>`).join('')
       const { value: formEdit } = await Swal.fire({
         title: 'EDIT PEMASUKAN',
-        html: `<input id="swal-edit-nom" type="text" inputmode="numeric" value="${new Intl.NumberFormat('id-ID').format(t.nominal)}" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.')" class="w-full h-12 px-4 mb-3 bg-[#F5F5F7] border border-gray-200 rounded-xl text-center font-bold outline-none focus:border-green-500"><select id="swal-edit-kat" class="w-full h-12 px-4 mb-3 bg-[#F5F5F7] border border-gray-200 rounded-xl text-center font-bold outline-none text-gray-500 uppercase">${optionsHtml}</select><input id="swal-edit-cat" type="text" value="${t.catatan || ''}" class="w-full h-12 px-4 bg-[#F5F5F7] border border-gray-200 rounded-xl text-center font-bold text-xs uppercase outline-none focus:border-green-500">`,
-        showCancelButton: true, confirmButtonText: 'SIMPAN',
-        customClass: { confirmButton: '!bg-green-600 !text-white !font-bold !w-full !rounded-xl !py-3 !mt-3', cancelButton: '!bg-gray-100 !text-gray-500 !font-bold !w-full !rounded-xl !py-3 !mt-3', popup: '!rounded-[1.5rem]' }, buttonsStyling: false,
+        html: `<input id="swal-edit-nom" type="text" inputmode="numeric" value="${new Intl.NumberFormat('id-ID').format(t.nominal)}" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.')" class="w-full h-10 px-4 mb-2 bg-[#F5F5F7] border border-transparent focus:border-green-400 focus:bg-white rounded-xl text-center font-black outline-none text-[12px]"><select id="swal-edit-kat" class="w-full h-10 px-4 mb-2 bg-[#F5F5F7] border border-transparent focus:border-green-400 focus:bg-white rounded-xl text-center font-black outline-none text-[10px] text-gray-600 uppercase tracking-widest">${optionsHtml}</select><input id="swal-edit-cat" type="text" value="${t.catatan || ''}" class="w-full h-10 px-4 bg-[#F5F5F7] border border-transparent focus:border-green-400 focus:bg-white rounded-xl text-center font-black text-[10px] uppercase outline-none placeholder:text-gray-400">`,
+        showCancelButton: true, confirmButtonText: 'SIMPAN', customClass: baseSwalClass, buttonsStyling: false,
         preConfirm: () => {
           const nom = Number((document.getElementById('swal-edit-nom') as HTMLInputElement).value.replace(/\./g, ''))
           const kat = (document.getElementById('swal-edit-kat') as HTMLSelectElement).value
@@ -66,7 +67,7 @@ export default function PemasukanPage() {
       })
       if (formEdit) { Swal.showLoading(); await editTransaksiHarian(t.id, formEdit.nom, formEdit.cat, formEdit.kat); await loadData() }
     } else if (aksi.isDenied) {
-      const hapus = await Swal.fire({ title: 'YAKIN HAPUS?', icon: 'warning', showCancelButton: true, confirmButtonText: 'HAPUS', customClass: { confirmButton: '!bg-red-600 !text-white !font-bold !rounded-xl !px-5 !py-3', cancelButton: '!bg-gray-100 !text-gray-500 !font-bold !rounded-xl !px-5 !py-3' }, buttonsStyling: false })
+      const hapus = await Swal.fire({ title: 'YAKIN HAPUS?', icon: 'warning', showCancelButton: true, confirmButtonText: 'HAPUS', customClass: { ...baseSwalClass, confirmButton: baseSwalClass.confirmButton.replace('bg-green-600', 'bg-red-600') }, buttonsStyling: false })
       if (hapus.isConfirmed) { Swal.showLoading(); await hapusTransaksiHarian(t.id); await loadData() }
     }
   }
@@ -74,49 +75,80 @@ export default function PemasukanPage() {
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-[3px] border-green-500 border-t-transparent rounded-full animate-spin"></div></div>
 
   return (
-    <main className="min-h-screen bg-[#FBFBFD] text-[#1D1D1F] flex flex-col items-center px-5 pt-6 pb-20">
-      <header className="w-full max-w-md flex justify-between items-center mb-6">
-        <h1 className="font-bold text-[16px] uppercase tracking-wider text-green-600">PEMASUKAN</h1>
-        <Link href="/" className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-[10px] font-bold shadow-sm hover:bg-gray-50">KEMBALI</Link>
+    <main className="min-h-screen bg-[#FBFBFD] text-[#1D1D1F] flex flex-col font-sans pb-20 selection:bg-green-200 overflow-x-hidden items-center">
+      
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes shine-glossy { 0% { transform: translateX(-100%) skewX(-20deg); } 100% { transform: translateX(200%) skewX(-20deg); } }
+      `}} />
+
+      {/* HEADER SLIM GLOSSY SIPEKAT (GREEN) */}
+      <header className="sticky top-0 z-50 w-full h-[68px] rounded-b-[2.5rem] bg-gradient-to-br from-emerald-600 via-green-500 to-green-700 shadow-[0_10px_30px_rgba(34,197,94,0.3)] border-b border-green-300/40 overflow-hidden flex flex-col items-center justify-center pt-1">
+        <div className="absolute top-0 h-full w-[50%] bg-gradient-to-r from-transparent via-white/30 to-transparent animate-[shine-glossy_4s_infinite]"></div>
+        
+        <div className="w-full max-w-xl relative flex flex-col items-center justify-center">
+          <Link href="/" className="absolute top-1/2 -translate-y-1/2 left-4 w-8 h-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 hover:bg-white/30 active:scale-95 transition-all z-10">
+            <svg className="w-4 h-4 text-white pr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path></svg>
+          </Link>
+          
+          <h1 className="text-white font-black text-[13px] tracking-[0.4em] uppercase drop-shadow-md z-10 leading-none">PEMASUKAN</h1>
+          <p className="text-green-100 text-[8px] font-black tracking-[0.3em] uppercase opacity-90 mt-1 z-10 leading-none">PENCATATAN DANA MASUK</p>
+        </div>
       </header>
 
-      <div className="w-full max-w-md bg-white p-6 rounded-[1.5rem] shadow-sm border border-gray-100 mb-6">
-        <form onSubmit={handleSimpan} className="flex flex-col gap-4">
-          <input name="nominal" type="text" inputMode="numeric" onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.') }} placeholder="NOMINAL" className="w-full h-14 px-4 bg-[#F5F5F7] border border-gray-200 rounded-xl text-center font-bold text-lg outline-none focus:border-green-500 tracking-wider" />
-          <select name="kategori" defaultValue="" className="w-full h-14 px-4 bg-[#F5F5F7] border border-gray-200 rounded-xl font-bold text-sm outline-none focus:border-green-500 text-center text-gray-500 uppercase">
-            <option value="" disabled>SUMBER DANA</option>
-            {kategoriList.map(k => <option key={k.id} value={k.id}>{k.nama_kategori}</option>)}
-          </select>
-          <input name="catatan" type="text" placeholder="CATATAN (OPSIONAL)" className="w-full h-14 px-4 bg-[#F5F5F7] border border-gray-200 rounded-xl text-center font-bold text-xs uppercase outline-none focus:border-green-500" />
-          <button type="submit" className="w-full h-14 bg-gradient-to-br from-green-600 to-green-500 text-white font-bold text-[11px] uppercase rounded-xl shadow-md hover:shadow-lg active:scale-95 transition-all mt-2 tracking-widest">
-            SIMPAN DATA
-          </button>
-        </form>
-      </div>
+      <div className="w-full max-w-xl px-4 mt-6 flex flex-col gap-4">
+        
+        {/* FORM SIPEKAT STYLE (COMPACT & SLIM) */}
+        <div className="bg-white p-4 rounded-[1.5rem] shadow-sm border border-gray-200 relative overflow-hidden">
+          <div className="flex items-center gap-2 mb-3">
+            <h2 className="text-[9px] font-black tracking-widest uppercase text-gray-400">INPUT DATA BARU</h2>
+            <span className="font-black text-[10px] text-green-500">+</span>
+          </div>
 
-      <div className="w-full max-w-md flex flex-col gap-3">
-        <div className="flex justify-between items-end ml-1 mb-1">
-          <h2 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">RIWAYAT (50 TERBARU)</h2>
-          {transaksi.length > 0 && (
-            <span className="text-[11px] font-bold text-green-600">
-              TOTAL: {formatRupiah(transaksi.reduce((acc, curr) => acc + Number(curr.nominal), 0))}
-            </span>
-          )}
+          <form onSubmit={handleSimpan} className="flex flex-col gap-2">
+            <input name="nominal" type="text" inputMode="numeric" onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.') }} placeholder="NOMINAL (RP)" className="w-full h-10 px-3 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-black text-[12px] outline-none focus:border-green-400 focus:bg-white tracking-widest transition-all placeholder:text-gray-400 placeholder:font-bold" />
+            
+            <select name="kategori" defaultValue="" className="w-full h-10 px-3 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-black text-[10px] outline-none focus:border-green-400 focus:bg-white text-gray-600 uppercase tracking-widest transition-all">
+              <option value="" disabled>-- SUMBER DANA --</option>
+              {kategoriList.map(k => <option key={k.id} value={k.id}>{k.nama_kategori}</option>)}
+            </select>
+            
+            <input name="catatan" type="text" placeholder="CATATAN / DESKRIPSI" className="w-full h-10 px-3 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-black text-[10px] uppercase outline-none focus:border-green-400 focus:bg-white transition-all placeholder:text-gray-400 placeholder:font-bold tracking-widest" />
+            
+            <button type="submit" className="w-full h-10 bg-green-600 text-white font-black text-[10px] uppercase rounded-xl shadow-sm hover:bg-green-700 active:scale-95 transition-all mt-1 tracking-[0.15em]">
+              SIMPAN DATA
+            </button>
+          </form>
         </div>
-        {transaksi.length === 0 ? <p className="text-[10px] font-bold text-gray-400 text-center py-4">BELUM ADA DATA</p> : 
-          transaksi.map(t => (
-            <div key={t.id} onClick={() => handleAksi(t)} className="bg-white p-4 rounded-[1.2rem] border border-gray-100 shadow-sm flex justify-between items-center cursor-pointer active:scale-95 hover:border-green-200 transition-all">
-              <div className="flex flex-col">
-                <span className="font-bold text-[12px] text-[#1D1D1F] uppercase">{t.kategori?.nama_kategori}</span>
-                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-0.5">{t.catatan || '-'}</span>
-              </div>
-              <div className="flex flex-col items-end">
-                <span className="font-bold text-[13px] text-green-600">{formatRupiah(t.nominal)}</span>
-                <span className="text-[8px] font-bold text-gray-400 uppercase mt-1">{new Date(t.waktu_transaksi).toLocaleDateString('id-ID')}</span>
-              </div>
-            </div>
-          ))
-        }
+
+        {/* LIST HISTORY SIPEKAT STYLE */}
+        <div className="flex flex-col gap-1.5 mt-2">
+          <div className="flex justify-between items-end ml-1 mb-1 border-b border-gray-200 pb-1">
+            <h2 className="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em]">RIWAYAT (50 TERBARU)</h2>
+            {transaksi.length > 0 && (
+              <span className="text-[10px] font-black text-green-600 tracking-tight">
+                TOTAL: {formatRupiah(transaksi.reduce((acc, curr) => acc + Number(curr.nominal), 0))}
+              </span>
+            )}
+          </div>
+
+          <div className="bg-white border border-gray-200 rounded-[1.2rem] shadow-sm overflow-hidden flex flex-col">
+            {transaksi.length === 0 ? <p className="text-[9px] font-black tracking-[0.2em] text-gray-400 text-center py-6">BELUM ADA DATA</p> : 
+              transaksi.map((t, i) => (
+                <div key={t.id} onClick={() => handleAksi(t)} className={`flex justify-between items-center px-4 py-3 border-b border-gray-100 last:border-b-0 cursor-pointer hover:bg-green-50 active:bg-green-100 transition-colors`}>
+                  <div className="flex flex-col">
+                    <span className="font-black text-[11px] text-[#1D1D1F] uppercase tracking-tight">{t.kategori?.nama_kategori}</span>
+                    <span className="text-[8px] font-bold text-gray-400 uppercase tracking-[0.1em] mt-0.5">{t.catatan || '-'}</span>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <span className="font-black text-[12px] text-green-600 tracking-tight">{formatRupiah(t.nominal)}</span>
+                    <span className="text-[7px] font-black text-gray-400 uppercase tracking-widest mt-1">{new Date(t.waktu_transaksi).toLocaleDateString('id-ID')}</span>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
       </div>
     </main>
   )

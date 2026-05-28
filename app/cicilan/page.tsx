@@ -21,22 +21,28 @@ export default function CicilanPage() {
 
   const formatRupiah = (angka: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka)
 
-  // MESIN PENJUMLAH OTOMATIS
   const totalBebanBulanan = cicilan.reduce((acc, curr) => acc + Number(curr.cicilan_wajib_per_bulan), 0)
   const totalPokokPinjaman = cicilan.reduce((acc, curr) => acc + Number(curr.total_pinjaman), 0)
 
+  const baseSwalClass = {
+    popup: '!max-w-[380px] !rounded-[2rem] border border-gray-200 shadow-2xl bg-white p-5',
+    title: 'text-[#1D1D1F] font-black uppercase text-[12px] tracking-widest mb-3',
+    actions: 'w-full flex flex-col gap-2 mt-4',
+    confirmButton: 'w-full h-10 flex items-center justify-center bg-blue-600 text-white font-black text-[10px] tracking-[0.15em] uppercase px-5 rounded-xl shadow-sm hover:bg-blue-700 active:scale-95 transition-all duration-200',
+    cancelButton: 'w-full h-10 flex items-center justify-center bg-[#F5F5F7] text-gray-500 font-black text-[10px] tracking-[0.15em] uppercase px-5 rounded-xl hover:bg-gray-200 active:scale-95 transition-all duration-200'
+  }
+
   const handleTambah = async () => {
     const htmlForm = `
-      <input id="swal-nama" type="text" placeholder="NAMA KREDITUR" class="w-full h-12 px-4 mb-3 bg-[#F5F5F7] border border-gray-200 rounded-xl text-center font-bold uppercase outline-none focus:border-blue-500 text-[12px]">
-      <input id="swal-pokok" type="text" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.')" placeholder="TOTAL PINJAMAN MURNI (Rp)" class="w-full h-12 px-4 mb-3 bg-[#F5F5F7] border border-gray-200 rounded-xl text-center font-bold outline-none focus:border-blue-500 text-[12px]">
-      <input id="swal-tenor" type="number" placeholder="TENOR (BULAN)" class="w-full h-12 px-4 mb-3 bg-[#F5F5F7] border border-gray-200 rounded-xl text-center font-bold outline-none focus:border-blue-500 text-[12px]">
-      <input id="swal-cicilan" type="text" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.')" placeholder="CICILAN WAJIB / BLN (Rp)" class="w-full h-12 px-4 mb-3 bg-[#F5F5F7] border border-gray-200 rounded-xl text-center font-bold outline-none focus:border-blue-500 text-[12px]">
-      <p class="text-[9px] font-bold text-gray-400 mt-2 mb-1">TANGGAL MULAI CICILAN 1 :</p>
-      <input id="swal-tempo" type="date" class="w-full h-12 px-4 bg-[#F5F5F7] border border-gray-200 rounded-xl text-center font-bold outline-none focus:border-blue-500 text-[12px]">
+      <div class="flex flex-col gap-2 text-left">
+        <input id="swal-nama" type="text" placeholder="NAMA KREDITUR" class="w-full h-10 px-4 bg-[#F5F5F7] border border-transparent focus:border-blue-400 focus:bg-white rounded-xl text-center font-black text-[11px] outline-none placeholder:text-gray-400 tracking-widest">
+        <input id="swal-pokok" type="text" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.')" placeholder="TOTAL PINJAMAN (RP)" class="w-full h-10 px-4 bg-[#F5F5F7] border border-transparent focus:border-blue-400 focus:bg-white rounded-xl text-center font-black text-[11px] outline-none placeholder:text-gray-400 tracking-widest">
+        <input id="swal-tenor" type="number" placeholder="TENOR (BULAN)" class="w-full h-10 px-4 bg-[#F5F5F7] border border-transparent focus:border-blue-400 focus:bg-white rounded-xl text-center font-black text-[11px] outline-none placeholder:text-gray-400 tracking-widest">
+        <input id="swal-cicilan" type="text" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.')" placeholder="CICILAN / BLN (RP)" class="w-full h-10 px-4 bg-[#F5F5F7] border border-transparent focus:border-blue-400 focus:bg-white rounded-xl text-center font-black text-[11px] outline-none placeholder:text-gray-400 tracking-widest">
+        <input id="swal-tempo" type="date" class="w-full h-10 px-4 bg-[#F5F5F7] border border-transparent focus:border-blue-400 focus:bg-white rounded-xl text-center font-black text-[11px] outline-none text-gray-500 tracking-widest">
+      </div>
     `
-    const { value: form } = await Swal.fire({
-      title: 'BUKU CICILAN BARU', html: htmlForm, showCancelButton: true, confirmButtonText: 'CETAK BUKU', cancelButtonText: 'BATAL', buttonsStyling: false,
-      customClass: { popup: '!rounded-[1.5rem] !p-5', confirmButton: '!bg-blue-600 !text-white !font-bold !w-full !rounded-xl !py-3 !mt-3 text-[10px] uppercase tracking-widest', cancelButton: '!bg-gray-100 !text-gray-500 !font-bold !w-full !rounded-xl !py-3 !mt-3 text-[10px] uppercase tracking-widest', actions: '!flex !flex-col w-full' },
+    const { value: form } = await Swal.fire({ title: 'BUKU CICILAN BARU', html: htmlForm, showCancelButton: true, confirmButtonText: 'CETAK BUKU', cancelButtonText: 'BATAL', customClass: baseSwalClass, buttonsStyling: false,
       preConfirm: () => {
         const nama = (document.getElementById('swal-nama') as HTMLInputElement).value
         const pokok = Number((document.getElementById('swal-pokok') as HTMLInputElement).value.replace(/\./g, ''))
@@ -52,52 +58,65 @@ export default function CicilanPage() {
 
   const handleHapus = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation()
-    const res = await Swal.fire({ title: 'BAKAR BUKU?', text: 'Riwayat bulanan bakal lenyap permanen!', icon: 'warning', showCancelButton: true, confirmButtonText: 'HAPUS', customClass: { confirmButton: '!bg-red-600 !text-white !font-bold !rounded-xl !px-5 !py-3', cancelButton: '!bg-gray-100 !text-gray-500 !font-bold !rounded-xl !px-5 !py-3' }, buttonsStyling: false })
+    const res = await Swal.fire({ title: 'BAKAR BUKU?', text: 'Riwayat bulanan bakal lenyap permanen!', icon: 'warning', showCancelButton: true, confirmButtonText: 'HAPUS', customClass: { ...baseSwalClass, confirmButton: baseSwalClass.confirmButton.replace('bg-blue-600', 'bg-red-600') }, buttonsStyling: false })
     if (res.isConfirmed) { Swal.showLoading(); await hapusCicilanMaster(id); await loadData() }
   }
 
-  if (loading) return <div className="min-h-screen bg-[#FBFBFD] flex items-center justify-center"><div className="w-8 h-8 border-[3px] border-blue-500 border-t-transparent rounded-full animate-spin"></div></div>
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-[3px] border-blue-500 border-t-transparent rounded-full animate-spin"></div></div>
 
   return (
-    <main className="min-h-screen bg-[#FBFBFD] text-[#1D1D1F] flex flex-col font-sans pb-24 px-5 pt-6">
-      <header className="w-full max-w-md mx-auto flex justify-between items-center mb-6">
-        <div><h1 className="font-bold text-[16px] text-blue-700 uppercase tracking-wider">DATA CICILAN</h1><p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">BUKU INDUK PINJAMAN</p></div>
-        <Link href="/" className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-[10px] font-bold shadow-sm hover:bg-gray-50">KEMBALI</Link>
+    <main className="min-h-screen bg-[#FBFBFD] text-[#1D1D1F] flex flex-col font-sans pb-24 items-center">
+      <style dangerouslySetInnerHTML={{__html: ` @keyframes shine-glossy { 0% { transform: translateX(-100%) skewX(-20deg); } 100% { transform: translateX(200%) skewX(-20deg); } } `}} />
+
+      {/* HEADER SLIM GLOSSY SIPEKAT (BLUE) */}
+      <header className="sticky top-0 z-50 w-full h-[68px] rounded-b-[2.5rem] bg-gradient-to-br from-blue-700 via-blue-600 to-blue-800 shadow-[0_10px_30px_rgba(37,99,235,0.3)] border-b border-blue-400/40 overflow-hidden flex flex-col items-center justify-center pt-1">
+        <div className="absolute top-0 h-full w-[50%] bg-gradient-to-r from-transparent via-white/30 to-transparent animate-[shine-glossy_4s_infinite]"></div>
+        <div className="w-full max-w-xl relative flex flex-col items-center justify-center">
+          <Link href="/" className="absolute top-1/2 -translate-y-1/2 left-4 w-8 h-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 hover:bg-white/30 active:scale-95 transition-all z-10">
+            <svg className="w-4 h-4 text-white pr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path></svg>
+          </Link>
+          <h1 className="text-white font-black text-[13px] tracking-[0.4em] uppercase drop-shadow-md z-10 leading-none">DATA CICILAN</h1>
+          <p className="text-blue-100 text-[8px] font-black tracking-[0.3em] uppercase opacity-90 mt-1 z-10 leading-none">BUKU INDUK PINJAMAN</p>
+        </div>
       </header>
 
-      {/* PAPAN REKAP TOTAL (BARU) */}
-      <div className="w-full max-w-md mx-auto bg-blue-900 p-5 rounded-[1.5rem] shadow-xl mb-6 flex flex-col relative overflow-hidden text-white">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
-        <div className="relative z-10 flex flex-col gap-4">
-          <div>
-            <p className="text-[9px] font-bold text-blue-300 uppercase tracking-widest mb-1">TOTAL BEBAN WAJIB BULANAN</p>
-            <h2 className="text-2xl font-bold tracking-tight">{formatRupiah(totalBebanBulanan)}</h2>
+      <div className="w-full max-w-xl px-4 mt-6 flex flex-col gap-4">
+        {/* PAPAN REKAP INDUSTRIAL */}
+        <div className="relative group">
+          <div className="absolute -inset-1 bg-blue-600/30 blur-xl rounded-full opacity-60"></div>
+          <div className="relative bg-gradient-to-br from-[#0B214A] to-[#1E3A8A] p-5 rounded-[1.5rem] shadow-xl text-white flex flex-col gap-2">
+            <p className="text-[9px] font-black text-blue-300 uppercase tracking-[0.3em]">TOTAL BEBAN WAJIB BULANAN</p>
+            <h2 className="text-2xl font-black tracking-tighter">{formatRupiah(totalBebanBulanan)}</h2>
+            <div className="border-t border-blue-800 pt-2 flex justify-between items-center">
+              <p className="text-[7px] font-black text-blue-300 uppercase tracking-[0.2em]">POKOK AKTIF</p>
+              <p className="font-black text-[11px] text-white tracking-widest">{formatRupiah(totalPokokPinjaman)}</p>
+            </div>
           </div>
-          <div className="border-t border-blue-800 pt-3">
-            <p className="text-[8px] font-bold text-blue-300 uppercase tracking-widest mb-0.5">AKUMULASI POKOK PINJAMAN AKTIF</p>
-            <p className="font-bold text-[13px]">{formatRupiah(totalPokokPinjaman)}</p>
-          </div>
+        </div>
+
+        <div className="flex flex-col gap-2 mt-2">
+          {cicilan.length === 0 ? (<div className="py-10 text-center border border-dashed border-gray-200 rounded-[1.5rem]"><p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">TIDAK ADA DATA</p></div>) 
+          : cicilan.map((c) => (
+            <div key={c.id} onClick={() => router.push(`/cicilan/${c.id}`)} className="bg-white border border-gray-100 rounded-[1.2rem] p-4 shadow-sm cursor-pointer hover:border-blue-200 transition-all active:scale-95 flex justify-between items-center">
+              <div>
+                <h2 className="font-black text-[11px] uppercase tracking-tight">{c.nama_kreditur}</h2>
+                <p className="text-[8px] font-bold text-gray-400 uppercase tracking-[0.1em] mt-0.5">POKOK : {formatRupiah(c.total_pinjaman)}</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  <p className="font-black text-[12px] text-red-600">{formatRupiah(c.cicilan_wajib_per_bulan)}</p>
+                  <p className="text-[7px] font-black text-gray-400 uppercase tracking-widest">/ BULAN</p>
+                </div>
+                <button onClick={(e) => handleHapus(e, c.id)} className="w-8 h-8 flex items-center justify-center bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all text-[10px]">✕</button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
-      <div className="w-full max-w-md mx-auto flex flex-col gap-4">
-        {cicilan.length === 0 ? (<div className="bg-white border border-dashed border-gray-200 rounded-[1.5rem] py-10 text-center shadow-sm"><p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">TIDAK ADA DATA CICILAN</p></div>) 
-        : cicilan.map((c) => (
-            <div key={c.id} onClick={() => router.push(`/cicilan/${c.id}`)} className="bg-white border border-blue-100 rounded-[1.2rem] p-5 shadow-sm flex flex-col cursor-pointer hover:border-blue-300 active:scale-95 transition-all relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-20 h-20 bg-blue-50 rounded-bl-full -z-0"></div>
-              <div className="relative z-10 flex justify-between items-start">
-                <div><h2 className="font-bold text-[14px] uppercase">{c.nama_kreditur}</h2><p className="text-[10px] font-bold text-gray-400 uppercase mt-1">POKOK : <span className="text-blue-600">{formatRupiah(c.total_pinjaman)}</span></p></div>
-                <button onClick={(e) => handleHapus(e, c.id)} className="w-8 h-8 flex items-center justify-center bg-red-50 text-red-600 rounded-lg hover:bg-red-100 active:scale-95 transition-all text-xs border border-red-100">🗑️</button>
-              </div>
-              <div className="relative z-10 flex justify-between items-end mt-4 pt-4 border-t border-gray-100">
-                <div className="flex flex-col"><p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">TENOR</p><p className="font-bold text-[11px] text-[#1D1D1F] mt-0.5">{c.tenor_bulan} BULAN</p></div>
-                <div className="flex flex-col items-end"><p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">WAJIB PER BULAN</p><p className="font-bold text-[12px] text-red-500 mt-0.5">{formatRupiah(c.cicilan_wajib_per_bulan)}</p></div>
-              </div>
-            </div>
-          ))
-        }
-      </div>
-      <button onClick={handleTambah} className="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center shadow-xl hover:scale-105 active:scale-95 z-50"><span className="text-2xl font-bold">+</span></button>
+      <button onClick={handleTambah} className="fixed bottom-6 right-6 w-14 h-14 bg-blue-700 text-white rounded-full flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 z-50">
+        <span className="text-2xl font-black">+</span>
+      </button>
     </main>
   )
 }
