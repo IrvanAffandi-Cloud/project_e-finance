@@ -1,13 +1,13 @@
 import { NextResponse, NextRequest } from 'next/server'
 
-    export function proxy(request: NextRequest) {
-      const session = request.cookies.get('finance_session')
-      if (request.nextUrl.pathname.startsWith('/dashboard')) {
-        if (!session || session.value !== 'true') {
-          return NextResponse.redirect(new URL('/', request.nextUrl))
-        }
-      }
-      return NextResponse.next()
-    }
+export default function proxy(request: NextRequest) {
+  const session = request.cookies.get('user_session')
+  const isProtected = request.nextUrl.pathname.startsWith('/dashboard') || request.nextUrl.pathname.startsWith('/kategori')
 
-    export const config = { matcher: ['/dashboard', '/dashboard/:path*'] }
+  if (isProtected && (!session || session.value !== 'true')) {
+    return NextResponse.redirect(new URL('/', request.nextUrl))
+  }
+  return NextResponse.next()
+}
+
+export const config = { matcher: ['/dashboard/:path*', '/kategori/:path*'] }
