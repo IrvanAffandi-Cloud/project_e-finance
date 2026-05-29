@@ -27,11 +27,11 @@ export default function Home() {
 
   // SIPEKAT SWEETALERT STYLE
   const baseSwalClass = {
-    popup: '!max-w-[380px] !rounded-[2rem] border border-gray-200 shadow-2xl bg-white p-6',
+    popup: '!max-w-[380px] !rounded-[2rem] border border-gray-200 shadow-2xl bg-white p-5',
     title: 'text-[#1D1D1F] font-bold uppercase text-[12px] tracking-widest mb-4',
-    actions: 'w-full flex flex-col gap-2 mt-5',
-    confirmButton: 'w-full h-10 flex items-center justify-center bg-[#0B214A] text-white font-bold text-[10px] tracking-[0.15em] uppercase px-5 rounded-xl shadow-sm hover:bg-blue-900 active:scale-95 transition-all duration-200',
-    cancelButton: 'w-full h-10 flex items-center justify-center bg-[#F5F5F7] border border-transparent text-gray-500 font-bold text-[10px] tracking-[0.15em] uppercase px-5 rounded-xl hover:bg-gray-200 active:scale-95 transition-all duration-200',
+    actions: 'w-full flex flex-row gap-3 mt-5',
+    confirmButton: 'flex-1 h-10 flex items-center justify-center bg-[#0B214A] text-white font-bold text-[10px] tracking-[0.15em] uppercase px-5 rounded-xl shadow-sm hover:bg-blue-900 active:scale-95 transition-all duration-200',
+    cancelButton: 'flex-1 h-10 flex items-center justify-center bg-[#F5F5F7] border border-transparent text-gray-500 font-bold text-[10px] tracking-[0.15em] uppercase px-5 rounded-xl hover:bg-gray-200 active:scale-95 transition-all duration-200',
     validationMessage: 'bg-red-50 text-red-600 font-bold text-[9px] tracking-widest uppercase rounded-xl border border-red-200 mt-3 py-2 px-3 shadow-sm'
   }
 

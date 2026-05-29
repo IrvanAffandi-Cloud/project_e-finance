@@ -6,9 +6,6 @@ import { getRadarDashboard } from '@/app/actions'
 export default function PembayaranPage() {
   const [data, setData] = useState<{ tunggakan: any[], bulanIni: any[], bulanDepan: any[] }>({ tunggakan: [], bulanIni: [], bulanDepan: [] })
   const [loading, setLoading] = useState(true)
-  
-  // STATE BUAT SISTEM BUKA-TUTUP (ACCORDION)
-  // 0 = Tunggakan, 1 = Bulan Ini, 2 = Bulan Depan
   const [openSections, setOpenSections] = useState<Record<number, boolean>>({ 0: true, 1: true, 2: false })
 
   useEffect(() => {
@@ -16,20 +13,55 @@ export default function PembayaranPage() {
       const today = new Date()
       const currMonth = today.getMonth()
       const currYear = today.getFullYear()
-      
-      const all = [...res.cicilan, ...res.utang].map(t => ({
-        ...t, 
-        nama: t.cicilan_master?.nama_kreditur || t.nama_kreditur || 'TANPA NAMA', 
-        beban: t.cicilan_master ? (t.cicilan_master.cicilan_wajib_per_bulan - t.nominal_dibayar) : Number(t.sisa_utang), 
-        tempo: new Date(t.tanggal_jatuh_tempo), 
-        // UBAH DISPLAY NAME MENJADI CICILAN ATAU PERORANGAN
-        tipe: t.cicilan_master ? 'CICILAN' : 'PERORANGAN'
-      }))
+      const batasBulanIni = new Date(currYear, currMonth, 1)
+      const batasBulanDepan = new Date(currYear, currMonth + 1, 1)
+
+      const tunggakan: any[] = []
+      const bulanIni: any[] = []
+      const bulanDepan: any[] = []
+
+      // PROSES CICILAN
+      res.cicilan.forEach((c: any) => {
+        const d = new Date(c.tanggal_jatuh_tempo)
+        const item = {
+          nama: c.cicilan_master?.nama_kreditur || 'CICILAN',
+          beban: (c.cicilan_master?.cicilan_wajib_per_bulan || 0) - Number(c.nominal_dibayar || 0),
+          totalPinjaman: Number(c.cicilan_master?.total_pinjaman || 0), // <-- DATA INI YANG LO MAU
+          tempo: d,
+          desc: `BLN KE-${c.bulan_ke} (CICILAN)`,
+          tipe: 'CICILAN'
+        }
+        
+        if (item.beban > 0) {
+          if (d < batasBulanIni) tunggakan.push(item)
+          else if (d >= batasBulanIni && d < batasBulanDepan) bulanIni.push(item)
+          else if (d >= batasBulanDepan && d < new Date(currYear, currMonth + 2, 1)) bulanDepan.push(item)
+        }
+      })
+
+      // PROSES UTANG
+      res.utang.forEach((u: any) => {
+        const d = new Date(u.tanggal_jatuh_tempo)
+        const item = {
+          nama: u.nama_kreditur,
+          beban: Number(u.sisa_utang || 0),
+          totalPinjaman: Number(u.sisa_utang || 0), // Utang biasanya = sisa utang saat input
+          tempo: d,
+          desc: 'UTANG PERORANGAN',
+          tipe: 'PERORANGAN'
+        }
+        
+        if (item.beban > 0) {
+          if (d < batasBulanIni) tunggakan.push(item)
+          else if (d >= batasBulanIni && d < batasBulanDepan) bulanIni.push(item)
+          else if (d >= batasBulanDepan && d < new Date(currYear, currMonth + 2, 1)) bulanDepan.push(item)
+        }
+      })
 
       setData({
-        tunggakan: all.filter(t => t.tempo < new Date(currYear, currMonth, 1)),
-        bulanIni: all.filter(t => t.tempo.getMonth() === currMonth && t.tempo.getFullYear() === currYear),
-        bulanDepan: all.filter(t => t.tempo.getMonth() === (currMonth + 1) % 12 && t.tempo.getFullYear() === (currMonth === 11 ? currYear + 1 : currYear))
+        tunggakan: tunggakan.sort((a,b) => a.tempo - b.tempo),
+        bulanIni: bulanIni.sort((a,b) => a.tempo - b.tempo),
+        bulanDepan: bulanDepan.sort((a,b) => a.tempo - b.tempo)
       })
       setLoading(false)
     })
@@ -49,23 +81,13 @@ export default function PembayaranPage() {
   )
 
   return (
-    <main className="min-h-screen bg-[#FBFBFD] text-[#1D1D1F] flex flex-col font-sans pb-24 selection:bg-red-200 overflow-x-hidden items-center">
-      
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes shine-glossy { 0% { transform: translateX(-100%) skewX(-20deg); } 100% { transform: translateX(200%) skewX(-20deg); } }
-      `}} />
-
-      {/* HEADER SLIM GLOSSY SIPEKAT (DARK RED) */}
+    <main className="min-h-screen bg-[#FBFBFD] text-[#1D1D1F] flex flex-col font-sans pb-24 items-center">
       <header className="sticky top-0 z-50 w-full h-[68px] rounded-b-[2.5rem] bg-gradient-to-br from-red-700 via-red-600 to-red-800 shadow-[0_10px_30px_rgba(220,38,38,0.3)] border-b border-red-400/40 overflow-hidden flex flex-col items-center justify-center pt-1">
-        <div className="absolute top-0 h-full w-[50%] bg-gradient-to-r from-transparent via-white/30 to-transparent animate-[shine-glossy_4s_infinite]"></div>
-        
         <div className="w-full max-w-xl relative flex flex-col items-center justify-center">
           <Link href="/" className="absolute top-1/2 -translate-y-1/2 left-4 w-8 h-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 hover:bg-white/30 active:scale-95 transition-all z-10">
-            <svg className="w-4 h-4 text-white pr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path></svg>
+            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path></svg>
           </Link>
-          
-          {/* JUDUL 17px FONT-BLACK */}
-          <h1 className="text-white font-black text-[17px] tracking-[0.4em] uppercase drop-shadow-md z-10 leading-none">PUSAT TAGIHAN</h1>
+          <h1 className="text-white font-black text-[17px] tracking-[0.4em] uppercase drop-shadow-md z-10">PUSAT TAGIHAN</h1>
         </div>
       </header>
 
@@ -76,40 +98,33 @@ export default function PembayaranPage() {
           { label: 'ESTIMASI BULAN DEPAN', items: data.bulanDepan, color: 'text-blue-600', borderColor: 'border-blue-200', bgCard: 'bg-white' }
         ].map((section, idx) => {
           const subTotal = section.items.reduce((acc, curr) => acc + curr.beban, 0)
-          
           return (
           <div key={idx} className="flex flex-col">
-            
-            {/* ACCORDION HEADER */}
-            <div onClick={() => toggleSection(idx)} className={`flex justify-between items-center px-4 py-4 bg-white border ${section.borderColor} rounded-[1.2rem] shadow-sm cursor-pointer hover:shadow-md active:scale-[0.98] transition-all`}>
+            <div onClick={() => toggleSection(idx)} className={`flex justify-between items-center px-4 py-4 bg-white border ${section.borderColor} rounded-[1.2rem] shadow-sm cursor-pointer hover:shadow-md transition-all`}>
               <div className="flex flex-col">
                 <h2 className={`text-[10px] font-black uppercase tracking-[0.2em] ${section.color}`}>{section.label}</h2>
                 <span className="text-[8px] font-bold text-gray-400 mt-1 uppercase tracking-widest">{section.items.length} TAGIHAN</span>
               </div>
               <div className="flex items-center gap-3">
                 <span className={`text-[12px] font-black tracking-tight ${section.color}`}>{formatRupiah(subTotal)}</span>
-                <svg className={`w-5 h-5 text-gray-400 transform transition-transform duration-300 ${openSections[idx] ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                <svg className={`w-5 h-5 text-gray-400 transform transition-transform ${openSections[idx] ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
               </div>
             </div>
             
-            {/* ISI DAFTAR TAGIHAN */}
             {openSections[idx] && (
-              <div className={`mt-2 bg-white border border-gray-200 rounded-[1.2rem] shadow-sm overflow-hidden flex flex-col transition-all origin-top`}>
+              <div className="mt-2 bg-white border border-gray-200 rounded-[1.2rem] shadow-sm overflow-hidden flex flex-col">
                 {section.items.length === 0 ? (
-                  <p className="text-[9px] font-bold tracking-[0.2em] text-gray-400 text-center py-6 uppercase">BERSIH DARI TAGIHAN</p>
+                  <p className="text-[9px] font-bold tracking-[0.2em] text-gray-400 text-center py-6 uppercase">BERSIH</p>
                 ) : (
                   section.items.map((t: any, i: number) => (
-                    // PADDING DIPRESS JADI py-2.5
-                    <div key={i} className={`flex justify-between items-center px-4 py-2.5 border-b border-gray-100 last:border-b-0 ${section.bgCard}`}>
+                    <div key={i} className={`flex justify-between items-center px-4 py-3 border-b border-gray-100 last:border-b-0 ${section.bgCard}`}>
                       <div className="flex flex-col">
                         <div className="flex items-center gap-2">
-                          {/* FONT BOLD BUKAN BLACK */}
-                          <span className="font-bold text-[12px] text-[#1D1D1F] uppercase tracking-tight truncate max-w-[140px] md:max-w-[200px]">{t.nama}</span>
-                          {/* BADGE TIPE FONT BOLD */}
+                          <span className="font-bold text-[12px] text-[#1D1D1F] uppercase tracking-tight truncate">{t.nama}</span>
                           <span className={`text-[6px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-widest ${t.tipe === 'CICILAN' ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-purple-50 text-purple-600 border-purple-200'}`}>{t.tipe}</span>
                         </div>
                         <span className="text-[8px] font-bold text-gray-500 uppercase tracking-[0.1em] mt-0.5">
-                          TEMPO : {t.tempo.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
+                          PINJAMAN: {formatRupiah(t.totalPinjaman)} | TEMPO: {t.tempo.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
                         </span>
                       </div>
                       <div className="flex flex-col items-end">
