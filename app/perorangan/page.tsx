@@ -17,25 +17,27 @@ export default function PeroranganPage() {
   }
   useEffect(() => { loadData() }, [])
 
-  // UBAH: actions jadi flex-row, gap dikecilkan, ukuran tombol flex-1 & text-[9px] agar muat 3 tombol sejajar
+  // UBAH: actions jadi flex-row, semua tombol pakai flex-1 biar sejajar 1 baris
   const baseSwalClass = {
     popup: '!max-w-[380px] !rounded-[2rem] border border-gray-200 shadow-2xl bg-white p-5',
     title: 'text-[#1D1D1F] font-black uppercase text-[12px] tracking-widest mb-3',
-    actions: 'w-full flex flex-row gap-1 mt-4',
+    actions: 'w-full flex flex-row gap-2 mt-4',
     confirmButton: 'flex-1 h-10 flex items-center justify-center bg-[#0B214A] text-white font-black text-[9px] tracking-[0.1em] uppercase px-1 rounded-xl shadow-sm hover:bg-blue-900 active:scale-95 transition-all duration-200',
-    cancelButton: 'flex-1 h-10 flex items-center justify-center bg-[#F5F5F7] text-gray-500 font-black text-[9px] tracking-[0.1em] uppercase px-1 rounded-xl hover:bg-gray-200 active:scale-95 transition-all duration-200'
+    cancelButton: 'flex-1 h-10 flex items-center justify-center bg-[#F5F5F7] text-gray-500 font-black text-[9px] tracking-[0.1em] uppercase px-1 rounded-xl hover:bg-gray-200 active:scale-95 transition-all duration-200',
+    denyButton: 'flex-1 h-10 flex items-center justify-center bg-gray-200 text-[#1D1D1F] font-black text-[9px] tracking-[0.1em] uppercase px-1 rounded-xl hover:bg-gray-300 active:scale-95 transition-all duration-200'
   }
 
   const handleTambah = async () => {
-    // UBAH: flex-row, lebar w-1/3 untuk masing-masing input agar sejajar 1 baris
+    // UBAH: flex-row biar form inputnya nyamping (1 baris), tulisan dikecilin, padding dikurangi
     const htmlForm = `
-      <div class="flex flex-row gap-1 text-left items-center w-full">
-        <input id="swal-nama" type="text" placeholder="NAMA" class="w-1/3 h-10 px-2 bg-[#F5F5F7] border border-transparent focus:border-blue-400 focus:bg-white rounded-xl text-center font-bold text-[9px] uppercase outline-none tracking-widest">
-        <input id="swal-pokok" type="text" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.')" placeholder="JUMLAH" class="w-1/3 h-10 px-2 bg-[#F5F5F7] border border-transparent focus:border-blue-400 focus:bg-white rounded-xl text-center font-bold text-[9px] outline-none tracking-widest">
-        <input id="swal-tempo" type="date" class="w-1/3 h-10 px-2 bg-[#F5F5F7] border border-transparent focus:border-blue-400 focus:bg-white rounded-xl text-center font-bold text-[9px] outline-none text-gray-500 tracking-widest">
+      <div class="flex flex-row gap-2 text-left w-full">
+        <input id="swal-nama" type="text" placeholder="NAMA" class="flex-1 w-full h-10 px-2 bg-[#F5F5F7] border border-transparent focus:border-blue-400 focus:bg-white rounded-xl text-center font-bold text-[9px] uppercase outline-none tracking-widest">
+        <input id="swal-pokok" type="text" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.')" placeholder="JUMLAH" class="flex-[1.2] w-full h-10 px-2 bg-[#F5F5F7] border border-transparent focus:border-blue-400 focus:bg-white rounded-xl text-center font-bold text-[10px] outline-none tracking-widest">
+        <input id="swal-tempo" type="date" class="flex-1 w-full h-10 px-1 bg-[#F5F5F7] border border-transparent focus:border-blue-400 focus:bg-white rounded-xl text-center font-bold text-[9px] outline-none text-gray-500 tracking-widest">
       </div>
     `
-    const { value: form } = await Swal.fire({ title: 'CATAT UTANG BARU', html: htmlForm, showCancelButton: true, confirmButtonText: 'SIMPAN', cancelButtonText: 'BATAL', customClass: baseSwalClass, buttonsStyling: false,
+    const { value: form } = await Swal.fire({ 
+      title: 'CATAT UTANG BARU', html: htmlForm, showCancelButton: true, confirmButtonText: 'SIMPAN', cancelButtonText: 'BATAL', customClass: baseSwalClass, buttonsStyling: false,
       preConfirm: () => {
         const nama = (document.getElementById('swal-nama') as HTMLInputElement).value
         const pokok = Number((document.getElementById('swal-pokok') as HTMLInputElement).value.replace(/\./g, ''))
@@ -50,14 +52,14 @@ export default function PeroranganPage() {
   const handleAksi = async (u: any) => {
     const aksi = await Swal.fire({
       title: 'OPSI UTANG', text: `${u.nama_kreditur}`, showCancelButton: true, showDenyButton: true, confirmButtonText: 'BAYAR', denyButtonText: 'EDIT', cancelButtonText: 'BATAL',
-      customClass: { popup: baseSwalClass.popup, title: baseSwalClass.title, confirmButton: baseSwalClass.confirmButton.replace('bg-[#0B214A]', 'bg-green-600').replace('hover:bg-blue-900', 'hover:bg-green-700'), denyButton: baseSwalClass.confirmButton, cancelButton: baseSwalClass.cancelButton, actions: baseSwalClass.actions }, buttonsStyling: false
+      customClass: { popup: baseSwalClass.popup, title: baseSwalClass.title, confirmButton: baseSwalClass.confirmButton.replace('bg-[#0B214A]', 'bg-green-600').replace('hover:bg-blue-900', 'hover:bg-green-700'), denyButton: baseSwalClass.denyButton, cancelButton: baseSwalClass.cancelButton, actions: baseSwalClass.actions }, buttonsStyling: false
     })
 
     if (aksi.isConfirmed) {
       const { value: nominal } = await Swal.fire({
         title: `BAYAR KE ${u.nama_kreditur}`, 
-        html: `<input id="swal-bayar" type="text" inputmode="numeric" value="${new Intl.NumberFormat('id-ID').format(u.sisa_utang)}" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.')" class="w-full h-10 px-4 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-bold outline-none focus:border-green-500 text-[12px] tracking-widest mt-2"><p class="text-[8px] font-bold text-[#1D1D1F] mt-2 tracking-widest text-center uppercase">*POTONG SALDO OTOMATIS</p>`, 
-        showCancelButton: true, confirmButtonText: 'BAYAR', cancelButtonText: 'BATAL', customClass: { ...baseSwalClass, confirmButton: baseSwalClass.confirmButton.replace('bg-[#0B214A]', 'bg-green-600').replace('hover:bg-blue-900', 'hover:bg-green-700') }, buttonsStyling: false,
+        html: `<div class="flex flex-col gap-2"><input id="swal-bayar" type="text" inputmode="numeric" value="${new Intl.NumberFormat('id-ID').format(u.sisa_utang)}" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.')" class="w-full h-10 px-4 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-bold outline-none focus:border-green-500 text-[12px] tracking-widest"><p class="text-[8px] font-bold text-[#1D1D1F] tracking-widest text-center uppercase">*POTONG SALDO OTOMATIS</p></div>`, 
+        showCancelButton: true, confirmButtonText: 'BAYAR SEKARANG', cancelButtonText: 'BATAL', customClass: { ...baseSwalClass, confirmButton: baseSwalClass.confirmButton.replace('bg-[#0B214A]', 'bg-green-600').replace('hover:bg-blue-900', 'hover:bg-green-700') }, buttonsStyling: false,
         preConfirm: () => {
           const val = Number((document.getElementById('swal-bayar') as HTMLInputElement).value.replace(/\./g, ''))
           if (!val || val <= 0) return Swal.showValidationMessage('NOMINAL TIDAK VALID!')
@@ -71,11 +73,11 @@ export default function PeroranganPage() {
         await tambahTransaksiHarian(nominal, `BAYAR UTANG KE: ${u.nama_kreditur}`, katId); await loadData(); Swal.fire({ title: 'TERBAYAR!', icon: 'success', timer: 1500, showConfirmButton: false })
       }
     } else if (aksi.isDenied) {
-      // UBAH: Tombol HAPUS dilebur ke dalam aksi bawaan form biar jadi 1 baris
-      const editResult = await Swal.fire({
+      const { value: formEdit } = await Swal.fire({
         title: 'EDIT UTANG', 
-        html: `<input id="swal-edit-nama" type="text" value="${u.nama_kreditur}" class="w-full h-10 px-4 mb-2 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-bold text-[10px] uppercase outline-none tracking-widest"><input id="swal-edit-pokok" type="text" inputmode="numeric" value="${new Intl.NumberFormat('id-ID').format(u.sisa_utang)}" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.')" class="w-full h-10 px-4 mb-2 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-bold text-[12px] outline-none tracking-widest"><input id="swal-edit-tempo" type="date" value="${new Date(u.tanggal_jatuh_tempo).toISOString().split('T')[0]}" class="w-full h-10 px-4 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-bold text-[10px] outline-none tracking-widest">`, 
-        showCancelButton: true, showDenyButton: true, confirmButtonText: 'SIMPAN', denyButtonText: 'HAPUS', cancelButtonText: 'BATAL', customClass: { ...baseSwalClass, denyButton: baseSwalClass.confirmButton.replace('bg-[#0B214A]', 'bg-red-600').replace('hover:bg-blue-900', 'hover:bg-red-700') }, buttonsStyling: false,
+        html: `<div class="flex flex-col gap-2"><input id="swal-edit-nama" type="text" value="${u.nama_kreditur}" class="w-full h-10 px-4 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-bold text-[10px] uppercase outline-none tracking-widest"><input id="swal-edit-pokok" type="text" inputmode="numeric" value="${new Intl.NumberFormat('id-ID').format(u.sisa_utang)}" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.')" class="w-full h-10 px-4 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-bold text-[12px] outline-none tracking-widest"><input id="swal-edit-tempo" type="date" value="${new Date(u.tanggal_jatuh_tempo).toISOString().split('T')[0]}" class="w-full h-10 px-4 bg-[#F5F5F7] border border-transparent rounded-xl text-center font-bold text-[10px] outline-none tracking-widest"><button id="btn-hapus-utang" class="w-full mt-2 py-3 bg-red-50 text-red-600 font-bold text-[9px] uppercase rounded-xl border border-red-200 tracking-widest">HAPUS UTANG PERMANEN</button></div>`, 
+        showCancelButton: true, confirmButtonText: 'SIMPAN', cancelButtonText: 'BATAL', customClass: baseSwalClass, buttonsStyling: false,
+        didOpen: () => { document.getElementById('btn-hapus-utang')?.addEventListener('click', async () => { const res = await Swal.fire({ title: 'HAPUS?', icon: 'warning', showCancelButton: true, confirmButtonText: 'HAPUS', cancelButtonText: 'BATAL', customClass: { ...baseSwalClass, confirmButton: baseSwalClass.confirmButton.replace('bg-[#0B214A]', 'bg-red-600') }, buttonsStyling: false }); if (res.isConfirmed) { Swal.showLoading(); await hapusUtang(u.id); await loadData(); Swal.close() } }) },
         preConfirm: () => {
           const nama = (document.getElementById('swal-edit-nama') as HTMLInputElement).value
           const pokok = Number((document.getElementById('swal-edit-pokok') as HTMLInputElement).value.replace(/\./g, ''))
@@ -84,12 +86,7 @@ export default function PeroranganPage() {
           return { nama, pokok, tempo }
         }
       })
-      if (editResult.isConfirmed && editResult.value) { 
-        Swal.showLoading(); await editUtang(u.id, editResult.value.nama, editResult.value.pokok, editResult.value.tempo); await loadData() 
-      } else if (editResult.isDenied) {
-        const res = await Swal.fire({ title: 'HAPUS?', icon: 'warning', showCancelButton: true, confirmButtonText: 'HAPUS', cancelButtonText: 'BATAL', customClass: { ...baseSwalClass, confirmButton: baseSwalClass.confirmButton.replace('bg-[#0B214A]', 'bg-red-600') }, buttonsStyling: false })
-        if (res.isConfirmed) { Swal.showLoading(); await hapusUtang(u.id); await loadData() }
-      }
+      if (formEdit) { Swal.showLoading(); await editUtang(u.id, formEdit.nama, formEdit.pokok, formEdit.tempo); await loadData() }
     }
   }
 
@@ -108,7 +105,7 @@ export default function PeroranganPage() {
           <Link href="/" className="absolute top-1/2 -translate-y-1/2 left-4 w-8 h-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 hover:bg-white/30 active:scale-95 transition-all z-10">
             <svg className="w-4 h-4 text-white pr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path></svg>
           </Link>
-          <h1 className="text-white font-black text-[17px] tracking-[0.4em] uppercase drop-shadow-md z-10 leading-none">PERORANGAN</h1>
+          <h2 className="text-white font-black text-[17px] tracking-[0.4em] uppercase text-center drop-shadow-md z-10 leading-none mt-1">PERORANGAN</h2>
         </div>
       </header>
 
@@ -147,4 +144,4 @@ export default function PeroranganPage() {
       </button>
     </main>
   )
-      }
+}
