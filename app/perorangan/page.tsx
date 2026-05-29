@@ -17,7 +17,6 @@ export default function PeroranganPage() {
   }
   useEffect(() => { loadData() }, [])
 
-  // UBAH: actions jadi flex-row, tombol dikasih flex-1 biar sejajar 1 baris
   const baseSwalClass = {
     popup: '!max-w-[380px] !rounded-[2rem] border border-gray-200 shadow-2xl bg-white p-5',
     title: 'text-[#1D1D1F] font-black uppercase text-[12px] tracking-widest mb-3',
@@ -27,7 +26,6 @@ export default function PeroranganPage() {
   }
 
   const handleTambah = async () => {
-    // UBAH: Placeholder disingkat sesuai instruksi
     const htmlForm = `
       <div class="flex flex-col gap-2 text-left">
         <input id="swal-nama" type="text" placeholder="NAMA" class="w-full h-10 px-4 bg-[#F5F5F7] border border-transparent focus:border-blue-400 focus:bg-white rounded-xl text-center font-bold text-[10px] uppercase outline-none tracking-widest">
@@ -40,7 +38,7 @@ export default function PeroranganPage() {
       html: htmlForm, 
       showCancelButton: true, 
       confirmButtonText: 'SIMPAN', 
-      cancelButtonText: 'BATAL', // UBAH: Tambah teks BATAL secara eksplisit
+      cancelButtonText: 'BATAL',
       customClass: baseSwalClass, 
       buttonsStyling: false,
       preConfirm: () => {
@@ -110,7 +108,6 @@ export default function PeroranganPage() {
           <Link href="/" className="absolute top-1/2 -translate-y-1/2 left-4 w-8 h-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 hover:bg-white/30 active:scale-95 transition-all z-10">
             <svg className="w-4 h-4 text-white pr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path></svg>
           </Link>
-          {/* UBAH: Teks Header dipotong */}
           <h2 className="text-white font-black text-[17px] tracking-[0.4em] uppercase text-center drop-shadow-md z-10 leading-none mt-1">PERORANGAN</h2>
         </div>
       </header>
@@ -118,26 +115,22 @@ export default function PeroranganPage() {
       <div className="w-full max-w-xl px-4 mt-6 flex flex-col gap-4">
         
         <div className="bg-white border border-gray-200 p-4 rounded-[1.2rem] shadow-sm flex justify-between items-center">
-          {/* UBAH: Label dipotong */}
           <p className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">TOTAL</p>
           <h2 className="text-[14px] font-black text-[#1D1D1F] tracking-tight">{formatRupiah(totalUtangAktif)}</h2>
         </div>
 
         <div className="bg-white border border-gray-200 rounded-[1.2rem] shadow-sm overflow-hidden flex flex-col">
           {utang.length === 0 ? (
-            {/* UBAH: Teks empty state */}
             <p className="text-[10px] font-bold tracking-[0.2em] text-gray-400 text-center py-6 uppercase">TIDAK ADA DATA</p>
           ) : (
             utang.map((u) => {
-              // UBAH: Logika H-7 Jatuh Tempo Merah
               const dueDate = new Date(u.tanggal_jatuh_tempo)
               dueDate.setHours(0, 0, 0, 0)
               const today = new Date()
               today.setHours(0, 0, 0, 0)
 
-              // Hitung selisih hari 
               const diffDays = Math.ceil((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
-              const isWarning = diffDays <= 7 // Berlaku buat yang H-7 sampai yang kelewat (minus)
+              const isWarning = diffDays <= 7 
               
               const textMainColor = isWarning ? 'text-red-600' : 'text-[#1D1D1F]'
               const textSubColor = isWarning ? 'text-red-400' : 'text-gray-400'
@@ -167,5 +160,4 @@ export default function PeroranganPage() {
       </button>
     </main>
   )
-        }
-          
+}
