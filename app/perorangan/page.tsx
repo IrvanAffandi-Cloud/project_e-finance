@@ -96,11 +96,71 @@ export default function PeroranganPage() {
   const formatRupiah = (angka: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka)
   const totalUtangAktif = utang.reduce((acc, curr) => acc + Number(curr.sisa_utang), 0)
 
+  // LOGIKA RINCIAN TANGGAL MODAL
+  const handleRincianTanggal = () => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0) // Zona waktu dinormalkan
+
+    const rincian: Record<string, number> = {}
+
+    utang.forEach(u => {
+      const sisa = Number(u.sisa_utang)
+      if (sisa <= 0) return // Buang yang lunas
+
+      const dueDate = new Date(u.tanggal_jatuh_tempo)
+      dueDate.setHours(0, 0, 0, 0) // Zona waktu dinormalkan
+
+      // Ambil tanggal >= hari ini (belum kelewat)
+      if (dueDate >= today) {
+        const dateStr = dueDate.toISOString().split('T')[0]
+        rincian[dateStr] = (rincian[dateStr] || 0) + sisa
+      }
+    })
+
+    const sortedDates = Object.keys(rincian).sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
+
+    if (sortedDates.length === 0) {
+      Swal.fire({ 
+        title: 'TIDAK ADA TAGIHAN', 
+        text: 'Semua tagihan ke depan sudah lunas atau tidak ada.', 
+        icon: 'info', 
+        customClass: baseSwalClass, 
+        buttonsStyling: false 
+      })
+      return
+    }
+
+    let htmlContent = '<div class="flex flex-col gap-2 mt-2 max-h-[60vh] overflow-y-auto no-scrollbar pb-2">'
+    sortedDates.forEach(date => {
+      const d = new Date(date)
+      const dateFormatted = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
+      htmlContent += `
+        <div class="flex justify-between items-center bg-[#F5F5F7] p-3 rounded-xl border border-gray-200">
+          <span class="font-bold text-[10px] text-gray-500 uppercase tracking-widest">${dateFormatted}</span>
+          <span class="font-black text-[12px] text-[#1D1D1F] tracking-tight">${formatRupiah(rincian[date])}</span>
+        </div>
+      `
+    })
+    htmlContent += '</div>'
+
+    Swal.fire({
+      title: 'KEBUTUHAN DANA (MENDATANG)',
+      html: htmlContent,
+      showConfirmButton: true,
+      confirmButtonText: 'TUTUP',
+      customClass: { 
+        ...baseSwalClass, 
+        confirmButton: baseSwalClass.confirmButton.replace('flex-1', 'w-full') 
+      },
+      buttonsStyling: false
+    })
+  }
+
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-[3px] border-purple-600 border-t-transparent rounded-full animate-spin"></div></div>
 
   return (
     <main className="min-h-screen bg-[#FBFBFD] text-[#1D1D1F] flex flex-col font-sans pb-24 items-center">
-      <style dangerouslySetInnerHTML={{__html: ` @keyframes shine-glossy { 0% { transform: translateX(-100%) skewX(-20deg); } 100% { transform: translateX(200%) skewX(-20deg); } } `}} />
+      <style dangerouslySetInnerHTML={{__html: ` @keyframes shine-glossy { 0% { transform: translateX(-100%) skewX(-20deg); } 100% { transform: translateX(200%) skewX(-20deg); } } .no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; } `}} />
 
       <header className="sticky top-0 z-50 w-full h-[68px] rounded-b-[2.5rem] bg-gradient-to-br from-purple-800 via-purple-700 to-purple-900 shadow-[0_10px_30px_rgba(147,51,234,0.3)] border-b border-purple-400/40 overflow-hidden flex flex-col items-center justify-center pt-1">
         <div className="absolute top-0 h-full w-[50%] bg-gradient-to-r from-transparent via-white/30 to-transparent animate-[shine-glossy_4s_infinite]"></div>
@@ -112,11 +172,18 @@ export default function PeroranganPage() {
         </div>
       </header>
 
-      <div className="w-full max-w-xl px-4 mt-6 flex flex-col gap-4">
+      <div className="w-full max-w-xl px-4 mt-6 flex flex-col gap-3">
         
-        <div className="bg-white border border-gray-200 p-4 rounded-[1.2rem] shadow-sm flex justify-between items-center">
-          <p className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">TOTAL</p>
-          <h2 className="text-[14px] font-black text-[#1D1D1F] tracking-tight">{formatRupiah(totalUtangAktif)}</h2>
+        {/* MODIFIKASI: Wrapper Total dan Tombol Rincian */}
+        <div className="flex flex-col gap-3">
+          <div className="bg-white border border-gray-200 p-4 rounded-[1.2rem] shadow-sm flex justify-between items-center">
+            <p className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">TOTAL</p>
+            <h2 className="text-[14px] font-black text-[#1D1D1F] tracking-tight">{formatRupiah(totalUtangAktif)}</h2>
+          </div>
+          <button onClick={handleRincianTanggal} className="mx-auto flex items-center gap-1 text-[9px] font-black text-purple-700 tracking-[0.2em] uppercase hover:text-purple-900 active:scale-95 transition-all py-1">
+            <span>LIHAT RINCIAN</span>
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7"></path></svg>
+          </button>
         </div>
 
         <div className="bg-white border border-gray-200 rounded-[1.2rem] shadow-sm overflow-hidden flex flex-col">
@@ -130,16 +197,28 @@ export default function PeroranganPage() {
               today.setHours(0, 0, 0, 0)
 
               const diffDays = Math.ceil((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
-              const isWarning = diffDays <= 7 
+              const isWarning = diffDays <= 7 && diffDays >= 0
+              const isLate = diffDays < 0
               
-              const textMainColor = isWarning ? 'text-red-600' : 'text-[#1D1D1F]'
-              const textSubColor = isWarning ? 'text-red-400' : 'text-gray-400'
+              let textMainColor = 'text-[#1D1D1F]'
+              let textSubColor = 'text-gray-400'
+              let bgClass = 'hover:bg-gray-50 active:bg-gray-100'
+
+              if (isWarning) {
+                textMainColor = 'text-orange-600'
+                textSubColor = 'text-orange-400'
+                bgClass = 'bg-orange-50/50 hover:bg-orange-50'
+              } else if (isLate) {
+                textMainColor = 'text-red-600'
+                textSubColor = 'text-red-400'
+                bgClass = 'bg-red-50/50 hover:bg-red-50'
+              }
 
               return (
                 <div 
                   key={u.id} 
                   onClick={() => handleAksi(u)} 
-                  className={`flex justify-between items-center px-4 py-2.5 border-b border-gray-100 last:border-b-0 cursor-pointer transition-colors ${isWarning ? 'bg-red-50/50 hover:bg-red-50' : 'hover:bg-gray-50 active:bg-gray-100'}`}
+                  className={`flex justify-between items-center px-4 py-2.5 border-b border-gray-100 last:border-b-0 cursor-pointer transition-colors ${bgClass}`}
                 >
                   <div className="flex flex-col">
                     <h2 className={`font-bold text-[12px] uppercase tracking-tight ${textMainColor}`}>{u.nama_kreditur}</h2>
@@ -160,4 +239,5 @@ export default function PeroranganPage() {
       </button>
     </main>
   )
-}
+        }
+            
