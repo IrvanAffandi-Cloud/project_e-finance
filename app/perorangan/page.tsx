@@ -96,7 +96,7 @@ export default function PeroranganPage() {
   const formatRupiah = (angka: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka)
   const totalUtangAktif = utang.reduce((acc, curr) => acc + Number(curr.sisa_utang), 0)
 
-  // LOGIKA RINCIAN TANGGAL MODAL
+  // LOGIKA RINCIAN TANGGAL MODAL (FIXED TIMEZONE BUG)
   const handleRincianTanggal = () => {
     const today = new Date()
     today.setHours(0, 0, 0, 0) // Zona waktu dinormalkan
@@ -112,7 +112,12 @@ export default function PeroranganPage() {
 
       // Ambil tanggal >= hari ini (belum kelewat)
       if (dueDate >= today) {
-        const dateStr = dueDate.toISOString().split('T')[0]
+        // PERBAIKAN: Gunakan fungsi Date lokal, jangan toISOString()
+        const year = dueDate.getFullYear()
+        const month = String(dueDate.getMonth() + 1).padStart(2, '0')
+        const day = String(dueDate.getDate()).padStart(2, '0')
+        const dateStr = `${year}-${month}-${day}`
+        
         rincian[dateStr] = (rincian[dateStr] || 0) + sisa
       }
     })
@@ -144,7 +149,7 @@ export default function PeroranganPage() {
     htmlContent += '</div>'
 
     Swal.fire({
-      title: 'KEBUTUHAN DANA (MENDATANG)',
+      title: 'DETAIL RINCIAN',
       html: htmlContent,
       showConfirmButton: true,
       confirmButtonText: 'TUTUP',
@@ -174,7 +179,6 @@ export default function PeroranganPage() {
 
       <div className="w-full max-w-xl px-4 mt-6 flex flex-col gap-3">
         
-        {/* MODIFIKASI: Wrapper Total dan Tombol Rincian */}
         <div className="flex flex-col gap-3">
           <div className="bg-white border border-gray-200 p-4 rounded-[1.2rem] shadow-sm flex justify-between items-center">
             <p className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">TOTAL</p>
@@ -223,7 +227,7 @@ export default function PeroranganPage() {
                   <div className="flex flex-col">
                     <h2 className={`font-bold text-[12px] uppercase tracking-tight ${textMainColor}`}>{u.nama_kreditur}</h2>
                     <p className={`text-[8px] font-bold uppercase tracking-[0.1em] mt-0.5 ${textSubColor}`}>
-                      TEMPO: {dueDate.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
+                      TEMPO : {dueDate.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
                     </p>
                   </div>
                   <p className={`font-bold text-[12px] tracking-tight ${textMainColor}`}>{formatRupiah(Number(u.sisa_utang))}</p>
@@ -240,4 +244,4 @@ export default function PeroranganPage() {
     </main>
   )
         }
-            
+
